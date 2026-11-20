@@ -1,0 +1,2930 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สื่อจำลองวงจรการทำความเย็นระบบปรับอากาศ Split-Type (R-32 &amp; R-410A)</title>
+    <style>
+        :root {
+            --bg-app: #090d16;
+            --bg-card: #0f172a;
+            --bg-subcard: #151e2e;
+            --bg-input: #1e293b;
+            --border-color: #1e293b;
+            --border-strong: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --accent-sky: #38bdf8;
+            --accent-cyan: #22d3ee;
+            --accent-blue: #3b82f6;
+            --accent-rose: #f43f5e;
+            --accent-amber: #f59e0b;
+            --accent-emerald: #10b981;
+            --accent-purple: #a855f7;
+            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Thai", sans-serif;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+        }
+
+        body.light-mode {
+            --bg-app: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-subcard: #f8fafc;
+            --bg-input: #e2e8f0;
+            --border-color: #cbd5e1;
+            --border-strong: #94a3b8;
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-app);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            line-height: 1.45;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .mono {
+            font-family: var(--font-mono);
+        }
+
+        /* Header */
+        header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            padding: 0.75rem 1rem;
+        }
+
+        .header-inner {
+            max-width: 1640px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #0ea5e9, #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+
+        .brand h1 {
+            font-size: 1.02rem;
+            font-weight: 700;
+            line-height: 1.25;
+        }
+
+        .brand h1 span {
+            color: var(--accent-sky);
+        }
+
+        .brand p {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+        }
+
+        .header-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* System Type Bar */
+        .system-bar {
+            background: var(--bg-subcard);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.55rem 1rem;
+        }
+
+        .system-bar-inner {
+            max-width: 1640px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.65rem;
+        }
+
+        .sys-label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--accent-sky);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .sys-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+        }
+
+        .sys-btn {
+            background: var(--bg-card);
+            border: 1.5px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.45rem 0.85rem;
+            border-radius: 11px;
+            font-family: var(--font-sans);
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            transition: all 0.15s ease;
+        }
+
+        .sys-btn:hover {
+            border-color: var(--accent-sky);
+            color: var(--text-primary);
+        }
+
+        .sys-btn.active {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.22), rgba(59, 130, 246, 0.22));
+            border-color: var(--accent-sky);
+            color: var(--accent-sky);
+            box-shadow: 0 2px 10px rgba(14, 165, 233, 0.2);
+        }
+
+        .sys-btn .sys-tag {
+            font-size: 0.65rem;
+            font-family: var(--font-mono);
+            padding: 0.1rem 0.35rem;
+            border-radius: 5px;
+            background: rgba(148, 163, 184, 0.16);
+            color: var(--text-muted);
+        }
+
+        .sys-btn.active .sys-tag {
+            background: rgba(56, 189, 248, 0.25);
+            color: #e0f2fe;
+        }
+
+        .segmented-group {
+            display: inline-flex;
+            background: var(--bg-input);
+            padding: 3px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .seg-btn {
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-family: var(--font-sans);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.35rem 0.65rem;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .seg-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .seg-btn.active {
+            background: #0ea5e9;
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(14, 165, 233, 0.35);
+        }
+
+        .icon-btn {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.4rem 0.65rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all 0.15s ease;
+        }
+
+        .icon-btn:hover {
+            border-color: var(--accent-sky);
+        }
+
+        /* Main Grid Layout */
+        main {
+            max-width: 1640px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 1rem;
+            display: grid;
+            grid-template-columns: 330px 1fr;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        @media (max-width: 1120px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .workspace {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-width: 0;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            gap: 0.5rem;
+        }
+
+        .card-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--accent-sky);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .link-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .link-btn:hover {
+            color: var(--accent-sky);
+        }
+
+        /* Refrigerant Selector Buttons */
+        .ref-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.55rem;
+            margin-bottom: 1rem;
+        }
+
+        .ref-btn {
+            background: var(--bg-subcard);
+            border: 2px solid var(--border-color);
+            border-radius: 11px;
+            padding: 0.55rem 0.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.15s ease;
+        }
+
+        .ref-btn strong {
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+
+        .ref-btn span {
+            font-size: 0.62rem;
+            opacity: 0.8;
+            text-align: center;
+        }
+
+        .ref-btn:hover {
+            border-color: var(--border-strong);
+        }
+
+        .ref-btn.active {
+            border-color: var(--accent-sky);
+            background: rgba(56, 189, 248, 0.14);
+            color: var(--accent-sky);
+        }
+
+        /* Sliders */
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+
+        .slider-item label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.77rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.35rem;
+        }
+
+        .slider-val {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 0.82rem;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: var(--bg-input);
+            border-radius: 999px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent-sky);
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.65);
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent-sky);
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.65);
+            cursor: pointer;
+        }
+
+        .slider-hints {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.64rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        /* Fault Buttons */
+        .fault-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+
+        .fault-btn {
+            width: 100%;
+            text-align: left;
+            background: var(--bg-subcard);
+            border: 1.5px solid var(--border-color);
+            border-radius: 11px;
+            padding: 0.58rem 0.7rem;
+            color: var(--text-secondary);
+            font-family: var(--font-sans);
+            font-size: 0.77rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            transition: all 0.15s ease;
+        }
+
+        .fault-btn:hover {
+            border-color: var(--accent-amber);
+        }
+
+        .fault-btn .badge {
+            font-size: 0.63rem;
+            font-family: var(--font-mono);
+            padding: 0.15rem 0.4rem;
+            border-radius: 6px;
+            background: rgba(148, 163, 184, 0.15);
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .fault-btn.active-normal {
+            border-color: var(--accent-emerald);
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--accent-emerald);
+            font-weight: 700;
+        }
+
+        .fault-btn.active-normal .badge {
+            background: rgba(16, 185, 129, 0.25);
+            color: var(--accent-emerald);
+        }
+
+        .fault-btn.active-fault {
+            border-color: var(--accent-amber);
+            background: rgba(245, 158, 11, 0.14);
+            color: #fbbf24;
+            font-weight: 700;
+        }
+
+        .fault-btn.active-fault .badge {
+            background: rgba(245, 158, 11, 0.25);
+            color: #fbbf24;
+        }
+
+        .diag-alert {
+            margin-top: 0.85rem;
+            padding: 0.75rem;
+            border-radius: 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            font-size: 0.75rem;
+        }
+
+        .diag-alert.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.4);
+        }
+
+        .diag-alert-title {
+            font-weight: 700;
+            color: var(--accent-emerald);
+            margin-bottom: 0.25rem;
+        }
+
+        .diag-alert.warning .diag-alert-title {
+            color: #fbbf24;
+        }
+
+        .diag-alert p {
+            color: var(--text-secondary);
+            line-height: 1.45;
+        }
+
+        /* KPI Telemetry Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.65rem;
+        }
+
+        @media (max-width: 1380px) {
+            .kpi-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.7rem 0.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--kpi-color, #38bdf8);
+        }
+
+        .kpi-label {
+            font-size: 0.69rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .kpi-val {
+            font-family: var(--font-mono);
+            font-size: 1.12rem;
+            font-weight: 700;
+            color: var(--kpi-color, #38bdf8);
+            margin: 0.15rem 0;
+        }
+
+        .kpi-sub {
+            font-size: 0.67rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        /* Schematic Section */
+        .schematic-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.6rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .schematic-title h2 {
+            font-size: 0.94rem;
+            font-weight: 700;
+        }
+
+        .schematic-title p {
+            font-size: 0.73rem;
+            color: var(--text-muted);
+        }
+
+        /* Interactive 5-State Legend Buttons */
+        .legend-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            background: var(--bg-subcard);
+            border: 1px solid var(--border-color);
+            padding: 0.35rem 0.55rem;
+            border-radius: 10px;
+        }
+
+        .state-pill-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            font-family: var(--font-sans);
+            font-size: 0.69rem;
+            font-weight: 600;
+            padding: 0.22rem 0.48rem;
+            border-radius: 7px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all 0.15s ease;
+        }
+
+        .state-pill-btn:hover {
+            background: rgba(148, 163, 184, 0.12);
+        }
+
+        .state-pill-btn.highlighted {
+            border-color: #facc15;
+            background: rgba(250, 204, 21, 0.14);
+            color: #fef08a;
+        }
+
+        .legend-swatch {
+            width: 13px;
+            height: 6px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .svg-wrapper {
+            background: #070b14;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        svg#hvac-svg {
+            width: 100%;
+            height: auto;
+            display: block;
+            user-select: none;
+        }
+
+        /* SVG Animations & Click Targets */
+        @keyframes pipeDash {
+            to {
+                stroke-dashoffset: -36;
+            }
+        }
+
+        .pipe-flow {
+            stroke-dasharray: 10 8;
+            animation: pipeDash var(--flow-duration, 1s) linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes fanRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .fan-rotor {
+            animation: fanRotate var(--fan-duration, 1.1s) linear infinite;
+            pointer-events: none;
+        }
+
+        .svg-decorative {
+            pointer-events: none;
+        }
+
+        .comp-target {
+            cursor: pointer;
+            pointer-events: all;
+            transition: filter 0.2s ease;
+        }
+
+        .comp-target:hover {
+            filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.85));
+        }
+
+        .comp-target.selected-comp {
+            filter: drop-shadow(0 0 14px rgba(250, 204, 21, 0.95));
+        }
+
+        .comp-target .selection-ring {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .comp-target.selected-comp .selection-ring {
+            opacity: 1;
+        }
+
+        /* Bottom Split Grid (P-h Diagram + Inspector) */
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 1.25fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 1200px) {
+            .bottom-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .ph-controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--bg-subcard);
+            border: 1px solid var(--border-color);
+            padding: 0.3rem;
+            border-radius: 10px;
+        }
+
+        .play-btn {
+            background: #0ea5e9;
+            color: #ffffff;
+            border: none;
+            border-radius: 7px;
+            padding: 0.35rem 0.7rem;
+            font-family: var(--font-sans);
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: background 0.15s ease;
+        }
+
+        .play-btn:hover {
+            background: #0284c7;
+        }
+
+        .play-btn.paused {
+            background: #10b981;
+        }
+
+        .play-btn.paused:hover {
+            background: #059669;
+        }
+
+        .fixed-spd-badge {
+            background: var(--bg-input);
+            border: 1px solid var(--border-strong);
+            color: var(--accent-sky);
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.32rem 0.6rem;
+            border-radius: 7px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .ph-hud {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            background: var(--bg-subcard);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.65rem;
+            font-size: 0.75rem;
+        }
+
+        .hud-stage {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-weight: 700;
+        }
+
+        .hud-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        .hud-metrics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .canvas-box {
+            position: relative;
+            width: 100%;
+            height: 410px;
+            background: #ffffff;
+            border: 1.5px solid var(--border-strong);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        canvas#ph-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Inspector Panel */
+        .comp-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+
+        .comp-tab {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.3rem 0.55rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .comp-tab:hover {
+            border-color: var(--accent-sky);
+        }
+
+        .comp-tab.active {
+            background: #0ea5e9;
+            border-color: #0ea5e9;
+            color: #ffffff;
+        }
+
+        .insp-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-top: 0.5rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .insp-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 0.65rem;
+        }
+
+        .pill {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.2rem 0.55rem;
+            border-radius: 6px;
+        }
+
+        .insp-desc {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
+        }
+
+        .state-compare {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.65rem;
+            background: var(--bg-subcard);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        @media (max-width: 520px) {
+            .state-compare {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .state-col + .state-col {
+            border-left: 1px solid var(--border-strong);
+            padding-left: 0.75rem;
+        }
+
+        @media (max-width: 520px) {
+            .state-col + .state-col {
+                border-left: none;
+                border-top: 1px solid var(--border-strong);
+                padding-left: 0;
+                padding-top: 0.6rem;
+            }
+        }
+
+        .state-col-head {
+            font-size: 0.66rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .state-col-name {
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin: 0.15rem 0;
+        }
+
+        .state-col-line {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            margin-top: 0.15rem;
+        }
+
+        .field-tip-box {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 11px;
+            padding: 0.65rem 0.75rem;
+            font-size: 0.74rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .field-tip-box strong {
+            display: block;
+            color: var(--accent-sky);
+            margin-bottom: 0.2rem;
+        }
+
+        .field-tip-box p {
+            color: var(--text-secondary);
+            line-height: 1.45;
+        }
+
+        .energy-footer {
+            border-top: 1px solid var(--border-color);
+            padding-top: 0.65rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.76rem;
+        }
+
+        .energy-footer span:first-child {
+            color: var(--text-muted);
+        }
+
+        .energy-footer span:last-child {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            color: var(--accent-sky);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Header Bar -->
+    <header>
+        <div class="header-inner">
+            <div class="brand">
+                <div class="brand-icon" aria-hidden="true">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18m0-18l-3 3m3-3l3 3m-3 15l-3-3m3 3l3-3M3 12h18M3 12l3-3m-3 3l3 3m15-3l-3-3m3 3l-3 3M5.636 5.636l12.728 12.728m0-12.728L5.636 18.364"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1>สื่อจำลองวงจรการทำความเย็นระบบปรับอากาศ <span id="header-sys-badge">Split-Type A/C</span></h1>
+                    <p>5-State Vapor-Compression Cycle &amp; Technical P-h Diagram Simulator (R-32 / R-410A)</p>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <div class="segmented-group" role="group" aria-label="หน่วยความดัน">
+                    <button type="button" id="btn-unit-mpa" class="seg-btn active">MPa(abs)</button>
+                    <button type="button" id="btn-unit-psig" class="seg-btn">PSIG</button>
+                    <button type="button" id="btn-unit-bar" class="seg-btn">Bar</button>
+                </div>
+                <button type="button" id="btn-theme-toggle" class="icon-btn" title="สลับโหมดสีหน้าจอ">
+                    <span id="theme-label">☀️ โหมดสว่าง</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2-Menu Refrigerant Selector Bar (Split-Type Only) -->
+    <nav class="system-bar" aria-label="เลือกเมนูสารทำความเย็น Split-Type">
+        <div class="system-bar-inner">
+            <div class="sys-label">❄️ ระบบปรับอากาศ Split-Type A/C — เลือกเมนูสารทำความเย็น (Refrigerant Menu):</div>
+            <div class="sys-tabs" id="sys-tabs">
+                <button type="button" class="sys-btn active" data-ref="R32">
+                    <span>💠 เมนูที่ 1: สารทำความเย็น R-32</span>
+                    <span class="sys-tag">HFC-32 | P-h Chart</span>
+                </button>
+                <button type="button" class="sys-btn" data-ref="R410A">
+                    <span>🔷 เมนูที่ 2: สารทำความเย็น R-410A</span>
+                    <span class="sys-tag">HFC-410A | P-h Chart</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Dashboard -->
+    <main>
+        <!-- Left Sidebar: Controls & Fault Troubleshooting -->
+        <aside class="sidebar">
+            <!-- Operating Parameters -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title">⚙️ พารามิเตอร์ Split-Type</h2>
+                    <button type="button" id="btn-reset" class="link-btn">รีเซ็ตค่าเริ่มต้น</button>
+                </div>
+
+                <div style="font-size:0.74rem; color:var(--text-muted); margin-bottom:0.4rem; font-weight:600;">
+                    ชนิดสารทำความเย็น (Refrigerant Selection)
+                </div>
+                <div class="ref-grid">
+                    <button type="button" id="btn-ref-r32" class="ref-btn active" data-ref="R32">
+                        <strong>R-32</strong>
+                        <span>Inverter Split-Type</span>
+                    </button>
+                    <button type="button" id="btn-ref-r410a" class="ref-btn" data-ref="R410A">
+                        <strong>R-410A</strong>
+                        <span>Standard Split-Type</span>
+                    </button>
+                </div>
+
+                <div class="slider-group">
+                    <!-- Indoor Room Temp -->
+                    <div class="slider-item">
+                        <label for="slider-indoor">
+                            <span id="label-indoor">อุณหภูมิห้อง (Indoor Room Temp)</span>
+                            <span id="readout-indoor" class="slider-val" style="color:var(--accent-cyan);">25.0 °C</span>
+                        </label>
+                        <input type="range" id="slider-indoor" min="18" max="30" step="0.5" value="25">
+                        <div class="slider-hints" id="hints-indoor">
+                            <span>18°C (เย็นจัด)</span>
+                            <span>25°C (มาตรฐาน)</span>
+                            <span>30°C (ภาระสูง)</span>
+                        </div>
+                    </div>
+
+                    <!-- Outdoor Ambient Temp -->
+                    <div class="slider-item">
+                        <label for="slider-outdoor">
+                            <span id="label-outdoor">อุณหภูมิภายนอก (Outdoor Ambient)</span>
+                            <span id="readout-outdoor" class="slider-val" style="color:#fb923c;">35.0 °C</span>
+                        </label>
+                        <input type="range" id="slider-outdoor" min="25" max="46" step="0.5" value="35">
+                        <div class="slider-hints" id="hints-outdoor">
+                            <span>25°C (เย็น)</span>
+                            <span>35°C (มาตรฐาน)</span>
+                            <span>46°C (ร้อนจัด)</span>
+                        </div>
+                    </div>
+
+                    <!-- Compressor Speed -->
+                    <div class="slider-item">
+                        <label for="slider-speed">
+                            <span id="label-speed">ความเร็วรอบคอมเพรสเซอร์ (Compressor)</span>
+                            <span id="readout-speed" class="slider-val" style="color:#c084fc;">100% (60 Hz)</span>
+                        </label>
+                        <input type="range" id="slider-speed" min="30" max="120" step="5" value="100">
+                        <div class="slider-hints">
+                            <span>30% (Part Load)</span>
+                            <span>100% (พิกัด)</span>
+                            <span>120% (เร่งสูงสุด)</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Fault Simulation Mode -->
+            <section class="card" style="flex:1; display:flex; flex-direction:column;">
+                <div class="card-header">
+                    <h2 class="card-title" style="color:#fbbf24;">⚠️ โหมดจำลองอาการเสีย (Fault Mode)</h2>
+                </div>
+                <p style="font-size:0.73rem; color:var(--text-muted); margin-bottom:0.65rem;">
+                    เลือกสถานการณ์ความผิดปกติเพื่อวิเคราะห์ผลกระทบต่อความดันทั้ง 5 สถานะ Superheat และ Subcooling
+                </p>
+
+                <div class="fault-list" id="fault-list">
+                    <button type="button" class="fault-btn active-normal" data-fault="NORMAL">
+                        <span>✅ ทำงานปกติ (Normal Operation)</span>
+                        <span class="badge">NORMAL</span>
+                    </button>
+                    <button type="button" class="fault-btn" data-fault="LOW_CHARGE">
+                        <span>💧 สารทำความเย็นขาด/รั่ว (Low Charge)</span>
+                        <span class="badge">LEAK</span>
+                    </button>
+                    <button type="button" class="fault-btn" data-fault="DIRTY_CONDENSER">
+                        <span>🔥 คอยล์ร้อนสกปรก/ระบายไม่ดี (High Head)</span>
+                        <span class="badge">HIGH HEAD</span>
+                    </button>
+                    <button type="button" class="fault-btn" data-fault="DIRTY_EVAPORATOR">
+                        <span>❄️ คอยล์เย็นตัน/ฟิลเตอร์สกปรก (Low Airflow)</span>
+                        <span class="badge">LOW FLOW</span>
+                    </button>
+                    <button type="button" class="fault-btn" data-fault="RESTRICTED_EEV">
+                        <span>⛔ วาล์วลดความดัน/แคปทิ้วอุดตัน (Restricted)</span>
+                        <span class="badge">BLOCKED</span>
+                    </button>
+                </div>
+
+                <div id="diag-alert" class="diag-alert">
+                    <div id="diag-alert-title" class="diag-alert-title">● สถานะระบบ: ทำงานปกติสมบูรณ์</div>
+                    <p id="diag-alert-desc">
+                        ความดันด้านดูด (Suction) และด้านอัด (Discharge) อยู่ในเกณฑ์มาตรฐาน ค่า Superheat และ Subcooling สมดุล ระบบทำความเย็นทำงานเต็มประสิทธิภาพ
+                    </p>
+                </div>
+            </section>
+        </aside>
+
+        <!-- Right Main Workspace -->
+        <div class="workspace">
+            <!-- Top KPI Telemetry Bar -->
+            <section class="kpi-grid">
+                <div class="kpi-card" style="--kpi-color:#22d3ee;">
+                    <div class="kpi-label">ความดันด้านดูด (Suction P₁)</div>
+                    <div id="kpi-suction-p" class="kpi-val">0.94 MPa</div>
+                    <div id="kpi-evap-tsat" class="kpi-sub">Tsat: 5.0 °C</div>
+                </div>
+                <div class="kpi-card" style="--kpi-color:#f43f5e;">
+                    <div class="kpi-label">ความดันด้านอัด (Discharge P₂)</div>
+                    <div id="kpi-discharge-p" class="kpi-val">2.88 MPa</div>
+                    <div id="kpi-cond-tsat" class="kpi-sub">Tsat: 46.2 °C</div>
+                </div>
+                <div class="kpi-card" style="--kpi-color:#38bdf8;">
+                    <div class="kpi-label">ซุปเปอร์ฮีท (Superheat)</div>
+                    <div id="kpi-superheat" class="kpi-val">6.5 K</div>
+                    <div id="kpi-sh-status" class="kpi-sub" style="color:#10b981;">ปกติ (5–8 K)</div>
+                </div>
+                <div class="kpi-card" style="--kpi-color:#f59e0b;">
+                    <div class="kpi-label">ซับคูลลิ่ง (Subcooling)</div>
+                    <div id="kpi-subcooling" class="kpi-val">5.2 K</div>
+                    <div id="kpi-sc-status" class="kpi-sub" style="color:#10b981;">ปกติ (4–7 K)</div>
+                </div>
+                <div class="kpi-card" style="--kpi-color:#10b981;">
+                    <div id="kpi-cap-label" class="kpi-label">ขนาดทำความเย็น (Capacity)</div>
+                    <div id="kpi-cap-btu" class="kpi-val">12,000 BTU/h</div>
+                    <div id="kpi-cap-kw" class="kpi-sub">3.52 kWth (1.0 TR)</div>
+                </div>
+                <div class="kpi-card" style="--kpi-color:#a855f7;">
+                    <div id="kpi-eff-label" class="kpi-label">ประสิทธิภาพ (COP / กำลังไฟ)</div>
+                    <div id="kpi-cop" class="kpi-val">3.65 COP</div>
+                    <div id="kpi-power" class="kpi-sub">Power: 0.96 kW</div>
+                </div>
+            </section>
+
+            <!-- Interactive Schematic Diagram -->
+            <section class="card">
+                <div class="schematic-header">
+                    <div class="schematic-title">
+                        <h2 id="schematic-heading">แผนภาพวงจรสารทำความเย็นระบบปรับอากาศ Split-Type (R-32)</h2>
+                        <p>คลิกที่อุปกรณ์หลักทั้ง 4 ส่วนบนภาพ หรือคลิกแถบ 5 สถานะด้านขวาเพื่อเน้นช่วงการทำงานบนกราฟ P-h</p>
+                    </div>
+                    <div class="legend-bar" id="state-legend-bar">
+                        <button type="button" class="state-pill-btn" data-state="1" title="คลิกเพื่อเน้นสถานะที่ 1">
+                            <span class="legend-swatch" style="background:#2563eb;"></span>1. Sat. Liquid (x=0)
+                        </button>
+                        <button type="button" class="state-pill-btn" data-state="2" title="คลิกเพื่อเน้นสถานะที่ 2">
+                            <span class="legend-swatch" style="background:#9333ea;"></span>2. Sat. Vapor (x=1)
+                        </button>
+                        <button type="button" class="state-pill-btn" data-state="3" title="คลิกเพื่อเน้นสถานะที่ 3">
+                            <span class="legend-swatch" style="background:#0891b2;"></span>3. Mixture (0&lt;x&lt;1)
+                        </button>
+                        <button type="button" class="state-pill-btn" data-state="4" title="คลิกเพื่อเน้นสถานะที่ 4">
+                            <span class="legend-swatch" style="background:#d97706;"></span>4. Sub-cooled Liquid
+                        </button>
+                        <button type="button" class="state-pill-btn" data-state="5" title="คลิกเพื่อเน้นสถานะที่ 5">
+                            <span class="legend-swatch" style="background:#dc2626;"></span>5. Superheated Vapor
+                        </button>
+                    </div>
+                </div>
+
+                <div class="svg-wrapper">
+                    <svg id="hvac-svg" viewBox="0 0 960 415" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arr-warm" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 1 L 10 5 L 0 9 z" fill="#f97316"/>
+                            </marker>
+                            <marker id="arr-hot" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444"/>
+                            </marker>
+                            <marker id="arr-cool" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+                            </marker>
+                            <linearGradient id="grad-evap" x1="0" y1="1" x2="0" y2="0">
+                                <stop offset="0%" stop-color="#06b6d4"/>
+                                <stop offset="72%" stop-color="#a855f7"/>
+                                <stop offset="100%" stop-color="#ef4444"/>
+                            </linearGradient>
+                            <linearGradient id="grad-cond" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#ef4444"/>
+                                <stop offset="22%" stop-color="#a855f7"/>
+                                <stop offset="55%" stop-color="#06b6d4"/>
+                                <stop offset="82%" stop-color="#3b82f6"/>
+                                <stop offset="100%" stop-color="#f59e0b"/>
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Decorative Background Enclosures & Piping -->
+                        <g class="svg-decorative">
+                            <!-- Left Zone Enclosure -->
+                            <rect id="svg-left-box" x="20" y="26" width="335" height="368" rx="18" fill="rgba(14, 165, 233, 0.06)" stroke="#0284c7" stroke-width="2" stroke-dasharray="6 4"/>
+                            <rect id="svg-left-banner" x="34" y="12" width="236" height="26" rx="8" fill="#0284c7"/>
+                            <text id="svg-left-title" x="152" y="29" text-anchor="middle" fill="#ffffff" font-size="11.5" font-weight="bold">คอยล์เย็น (INDOOR UNIT / FCU)</text>
+
+                            <!-- Center Boundary Divider -->
+                            <rect x="386" y="18" width="22" height="382" rx="4" fill="#334155" opacity="0.55"/>
+                            <text id="svg-divider-label" x="397" y="208" text-anchor="middle" fill="#94a3b8" font-size="9.5" font-weight="bold" transform="rotate(-90 397 208)">ผนังอาคาร (WALL BOUNDARY)</text>
+
+                            <!-- Right Zone Enclosure -->
+                            <rect id="svg-right-box" x="442" y="26" width="498" height="368" rx="18" fill="rgba(249, 115, 22, 0.06)" stroke="#ea580c" stroke-width="2" stroke-dasharray="6 4"/>
+                            <rect id="svg-right-banner" x="676" y="12" width="248" height="26" rx="8" fill="#ea580c"/>
+                            <text id="svg-right-title" x="800" y="29" text-anchor="middle" fill="#ffffff" font-size="11.5" font-weight="bold">คอยล์ร้อน (OUTDOOR UNIT / CDU)</text>
+
+                            <!-- Piping Segment 1->2: Suction Line (5. Superheated Vapor) -->
+                            <path d="M 195 95 L 485 95 Q 505 95 505 115 L 505 262 Q 505 278 525 278 L 545 278" fill="none" stroke="#991b1b" stroke-width="10" stroke-linecap="round"/>
+                            <path d="M 195 95 L 485 95 Q 505 95 505 115 L 505 262 Q 505 278 525 278 L 545 278" fill="none" stroke="#f87171" stroke-width="5" stroke-linecap="round" class="pipe-flow"/>
+
+                            <!-- Piping Segment 2->3: Discharge Line (5. Superheated Vapor) -->
+                            <path d="M 590 215 L 590 115 Q 590 95 610 95 L 725 95" fill="none" stroke="#b91c1c" stroke-width="10" stroke-linecap="round"/>
+                            <path d="M 590 215 L 590 115 Q 590 95 610 95 L 725 95" fill="none" stroke="#fca5a5" stroke-width="5" stroke-linecap="round" class="pipe-flow"/>
+
+                            <!-- Piping Segment 3->4: High Pressure Liquid Line (4. Sub-cooled Liquid) -->
+                            <path d="M 725 318 L 515 318" fill="none" stroke="#d97706" stroke-width="9" stroke-linecap="round"/>
+                            <path d="M 725 318 L 515 318" fill="none" stroke="#fcd34d" stroke-width="4" stroke-linecap="round" class="pipe-flow"/>
+
+                            <!-- Piping Segment 4->1: Low Pressure Two-Phase Line (3. Mixture) -->
+                            <path d="M 455 318 L 195 318" fill="none" stroke="#0e7490" stroke-width="9" stroke-linecap="round"/>
+                            <path d="M 455 318 L 195 318" fill="none" stroke="#67e8f9" stroke-width="4" stroke-linecap="round" class="pipe-flow"/>
+
+                            <!-- Pipe Labels -->
+                            <rect x="378" y="87" width="38" height="16" rx="3" fill="#475569" stroke="#cbd5e1" stroke-width="1.5"/>
+                            <text id="svg-top-pipe-label" x="397" y="79" text-anchor="middle" fill="#f87171" font-size="9.5" font-weight="bold">ท่อก๊าซ (Suction)</text>
+
+                            <rect x="378" y="310" width="38" height="16" rx="3" fill="#475569" stroke="#cbd5e1" stroke-width="1.5"/>
+                            <text id="svg-bot-pipe-label" x="397" y="343" text-anchor="middle" fill="#22d3ee" font-size="9.5" font-weight="bold">ท่อของเหลว (Liquid)</text>
+
+                            <!-- State Point 1 Badge: 5. Superheated Vapor -->
+                            <g transform="translate(280, 95)">
+                                <circle cx="0" cy="0" r="14" fill="#dc2626" stroke="#ffffff" stroke-width="2"/>
+                                <text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">1</text>
+                                <rect x="-74" y="-56" width="148" height="38" rx="6" fill="#0f172a" stroke="#ef4444" stroke-width="1.5"/>
+                                <text x="0" y="-44" text-anchor="middle" fill="#fca5a5" font-size="8.5" font-weight="bold">5. Superheated Vapor</text>
+                                <text id="svg-t1" x="0" y="-33" text-anchor="middle" fill="#f87171" font-size="10.5" font-weight="bold" class="mono">11.0°C</text>
+                                <text id="svg-p1" x="0" y="-22" text-anchor="middle" fill="#cbd5e1" font-size="9" class="mono">118 PSIG</text>
+                            </g>
+
+                            <!-- State Point 2 Badge: 5. Superheated Vapor -->
+                            <g transform="translate(650, 95)">
+                                <circle cx="0" cy="0" r="14" fill="#dc2626" stroke="#ffffff" stroke-width="2"/>
+                                <text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">2</text>
+                                <rect x="-74" y="-56" width="148" height="38" rx="6" fill="#0f172a" stroke="#ef4444" stroke-width="1.5"/>
+                                <text x="0" y="-44" text-anchor="middle" fill="#fca5a5" font-size="8.5" font-weight="bold">5. Superheated Vapor</text>
+                                <text id="svg-t2" x="0" y="-33" text-anchor="middle" fill="#f87171" font-size="10.5" font-weight="bold" class="mono">78.5°C</text>
+                                <text id="svg-p2" x="0" y="-22" text-anchor="middle" fill="#cbd5e1" font-size="9" class="mono">395 PSIG</text>
+                            </g>
+
+                            <!-- State Point 3 Badge: 4. Sub-cooled Liquid -->
+                            <g transform="translate(650, 318)">
+                                <circle cx="0" cy="0" r="14" fill="#d97706" stroke="#ffffff" stroke-width="2"/>
+                                <text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">3</text>
+                                <rect x="-74" y="18" width="148" height="38" rx="6" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5"/>
+                                <text x="0" y="30" text-anchor="middle" fill="#fde68a" font-size="8.5" font-weight="bold">4. Sub-cooled Liquid</text>
+                                <text id="svg-t3" x="0" y="41" text-anchor="middle" fill="#fbbf24" font-size="10.5" font-weight="bold" class="mono">41.0°C</text>
+                                <text id="svg-p3" x="0" y="52" text-anchor="middle" fill="#cbd5e1" font-size="9" class="mono">395 PSIG</text>
+                            </g>
+
+                            <!-- State Point 4 Badge: 3. Mixture -->
+                            <g transform="translate(280, 318)">
+                                <circle cx="0" cy="0" r="14" fill="#0891b2" stroke="#ffffff" stroke-width="2"/>
+                                <text x="0" y="4" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">4</text>
+                                <rect x="-74" y="18" width="148" height="38" rx="6" fill="#0f172a" stroke="#06b6d4" stroke-width="1.5"/>
+                                <text id="svg-s4-label" x="0" y="30" text-anchor="middle" fill="#a5f3fc" font-size="8.5" font-weight="bold">3. Mixture (x=0.22)</text>
+                                <text id="svg-t4" x="0" y="41" text-anchor="middle" fill="#22d3ee" font-size="10.5" font-weight="bold" class="mono">4.5°C</text>
+                                <text id="svg-p4" x="0" y="52" text-anchor="middle" fill="#cbd5e1" font-size="9" class="mono">118 PSIG</text>
+                            </g>
+                        </g>
+
+                        <!-- ==================== CLICKABLE COMPONENT 1: EVAPORATOR ==================== -->
+                        <g id="evap-group" class="comp-target" role="button" tabindex="0" aria-label="เลือกคอยล์เย็น Evaporator">
+                            <rect x="30" y="62" width="235" height="320" rx="14" fill="rgba(56, 189, 248, 0.01)"/>
+                            <rect class="selection-ring" x="30" y="62" width="235" height="320" rx="14" fill="none" stroke="#facc15" stroke-width="2.5" stroke-dasharray="6 3"/>
+
+                            <!-- Main Evaporator Vessel / Coil -->
+                            <rect x="115" y="75" width="88" height="262" rx="12" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
+                            <path d="M 188 95 L 130 95 L 130 125 L 182 125 L 182 155 L 130 155 L 130 185 L 182 185 L 182 215 L 130 215 L 130 245 L 182 245 L 182 275 L 130 275 L 130 318 L 188 318"
+                                  fill="none" stroke="url(#grad-evap)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+                            <!-- Intermediate Point 4a: 2. Saturated Vapor (x=1) inside Evaporator -->
+                            <circle cx="156" cy="140" r="6" fill="#a855f7" stroke="#ffffff" stroke-width="1.5"/>
+                            <rect x="121" y="114" width="76" height="17" rx="4" fill="#1e1b4b" stroke="#a855f7" stroke-width="1"/>
+                            <text x="159" y="125" text-anchor="middle" fill="#e9d5ff" font-size="7.5" font-weight="bold">2. Sat.Vapor(4a)</text>
+
+                            <!-- Mode A: Air Blower (Split / VRV) -->
+                            <g id="evap-mode-air">
+                                <g transform="translate(68, 205)">
+                                    <circle cx="0" cy="0" r="26" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+                                    <g class="fan-rotor">
+                                        <path d="M 0 -20 C 8 -20 10 -8 0 0 C -10 -8 -8 -20 0 -20 Z" fill="#38bdf8"/>
+                                        <path d="M 20 0 C 20 8 8 10 0 0 C 8 -10 20 -8 20 0 Z" fill="#38bdf8"/>
+                                        <path d="M 0 20 C -8 20 -10 8 0 0 C 10 8 8 20 0 20 Z" fill="#38bdf8"/>
+                                        <path d="M -20 0 C -20 -8 -8 -10 0 0 C -8 10 -20 8 -20 0 Z" fill="#38bdf8"/>
+                                    </g>
+                                    <circle cx="0" cy="0" r="5" fill="#f8fafc"/>
+                                </g>
+                                <path d="M 248 160 L 208 160" stroke="#f97316" stroke-width="2.5" marker-end="url(#arr-warm)"/>
+                                <text id="svg-evap-in-lbl" x="210" y="144" fill="#fb923c" font-size="9.5" font-weight="bold">ลมร้อนในห้อง</text>
+                                <text id="svg-return-air" x="210" y="177" fill="#cbd5e1" font-size="10" class="mono">25.0°C</text>
+
+                                <path d="M 110 250 L 42 250" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arr-cool)"/>
+                                <text id="svg-evap-out-lbl" x="74" y="268" text-anchor="middle" fill="#38bdf8" font-size="9.5" font-weight="bold">ลมเย็นส่งออก</text>
+                                <text id="svg-supply-air" x="74" y="280" text-anchor="middle" fill="#e0f2fe" font-size="10" class="mono">13.5°C</text>
+                            </g>
+
+                            <!-- Mode B: Chilled Water Loop & Pump (Air/Water Chiller) -->
+                            <g id="evap-mode-water" style="display:none;">
+                                <!-- CHW Return Pipe -->
+                                <path d="M 38 155 L 115 155" stroke="#f97316" stroke-width="6" stroke-linecap="round"/>
+                                <path d="M 38 155 L 106 155" stroke="#fdba74" stroke-width="2.5" class="pipe-flow" marker-end="url(#arr-warm)"/>
+                                <text x="74" y="138" text-anchor="middle" fill="#fb923c" font-size="9" font-weight="bold">CHW Return</text>
+                                <text id="svg-chw-ret" x="74" y="172" text-anchor="middle" fill="#fed7aa" font-size="9.5" class="mono">12.0°C</text>
+
+                                <!-- CHW Supply Pipe + Pump -->
+                            <!-- Mode A: Air Blower (Split-Type) -->
+                            <g id="evap-mode-air">
+                                <g transform="translate(68, 205)">
+                                    <circle cx="0" cy="0" r="26" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+                                    <g class="fan-rotor">
+                                        <path d="M 0 -20 C 8 -20 10 -8 0 0 C -10 -8 -8 -20 0 -20 Z" fill="#38bdf8"/>
+                                        <path d="M 20 0 C 20 8 8 10 0 0 C 8 -10 20 -8 20 0 Z" fill="#38bdf8"/>
+                                        <path d="M 0 20 C -8 20 -10 8 0 0 C 10 8 8 20 0 20 Z" fill="#38bdf8"/>
+                                        <path d="M -20 0 C -20 -8 -8 -10 0 0 C -8 10 -20 8 -20 0 Z" fill="#38bdf8"/>
+                                    </g>
+                                    <circle cx="0" cy="0" r="5" fill="#f8fafc"/>
+                                </g>
+                                <path d="M 248 160 L 208 160" stroke="#f97316" stroke-width="2.5" marker-end="url(#arr-warm)"/>
+                                <text id="svg-evap-in-lbl" x="210" y="144" fill="#fb923c" font-size="9.5" font-weight="bold">ลมร้อนในห้อง</text>
+                                <text id="svg-return-air" x="210" y="177" fill="#cbd5e1" font-size="10" class="mono">25.0°C</text>
+
+                                <path d="M 110 250 L 42 250" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arr-cool)"/>
+                                <text id="svg-evap-out-lbl" x="74" y="268" text-anchor="middle" fill="#38bdf8" font-size="9.5" font-weight="bold">ลมเย็นส่งออก</text>
+                                <text id="svg-supply-air" x="74" y="280" text-anchor="middle" fill="#e0f2fe" font-size="10" class="mono">13.5°C</text>
+                            </g>
+
+                            <text id="svg-evap-title" x="159" y="357" text-anchor="middle" fill="#38bdf8" font-size="11.5" font-weight="bold">คอยล์เย็น (Evaporator)</text>
+                            <text id="svg-evap-sub" x="159" y="371" text-anchor="middle" fill="#94a3b8" font-size="9">(4 → 4a → 1)</text>
+                        </g>
+
+                        <!-- ==================== CLICKABLE COMPONENT 2: COMPRESSOR ==================== -->
+                        <g id="comp-group" class="comp-target selected-comp" role="button" tabindex="0" aria-label="เลือกคอมเพรสเซอร์ Compressor">
+                            <rect x="512" y="204" width="146" height="168" rx="14" fill="rgba(168, 85, 247, 0.01)"/>
+                            <rect class="selection-ring" x="512" y="204" width="146" height="168" rx="14" fill="none" stroke="#facc15" stroke-width="2.5" stroke-dasharray="6 3"/>
+
+                            <rect x="545" y="215" width="90" height="106" rx="35" fill="#0f172a" stroke="#a855f7" stroke-width="3"/>
+                            <rect x="522" y="246" width="22" height="55" rx="10" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+                            <circle cx="590" cy="268" r="24" fill="#1e1b4b" stroke="#c084fc" stroke-width="2"/>
+                            <path d="M 575 256 L 605 262 M 575 280 L 605 274" stroke="#e879f9" stroke-width="2.5" stroke-linecap="round"/>
+                            <text id="svg-comp-hz" x="590" y="272" text-anchor="middle" fill="#f3e8ff" font-size="11" font-weight="bold" class="mono">60Hz</text>
+
+                            <text id="svg-comp-title" x="590" y="343" text-anchor="middle" fill="#c084fc" font-size="11.5" font-weight="bold">คอมเพรสเซอร์</text>
+                            <text id="svg-comp-sub" x="590" y="357" text-anchor="middle" fill="#94a3b8" font-size="9.5">(Compressor 1→2)</text>
+                        </g>
+
+                        <!-- ==================== CLICKABLE COMPONENT 3: CONDENSER ==================== -->
+                        <g id="cond-group" class="comp-target" role="button" tabindex="0" aria-label="เลือกคอยล์ร้อน Condenser">
+                            <rect x="710" y="62" width="220" height="320" rx="14" fill="rgba(249, 115, 22, 0.01)"/>
+                            <rect class="selection-ring" x="710" y="62" width="220" height="320" rx="14" fill="none" stroke="#facc15" stroke-width="2.5" stroke-dasharray="6 3"/>
+
+                            <rect x="720" y="75" width="90" height="262" rx="12" fill="#0f172a" stroke="#f97316" stroke-width="2.5"/>
+                            <path d="M 728 95 L 795 95 L 795 125 L 735 125 L 735 155 L 795 155 L 795 185 L 735 185 L 735 215 L 795 215 L 795 245 L 735 245 L 735 275 L 795 275 L 795 318 L 728 318"
+                                  fill="none" stroke="url(#grad-cond)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+                            <!-- Intermediate Point 2a: 2. Saturated Vapor (x=1) inside Condenser -->
+                            <circle cx="765" cy="140" r="6" fill="#a855f7" stroke="#ffffff" stroke-width="1.5"/>
+                            <rect x="726" y="114" width="78" height="17" rx="4" fill="#1e1b4b" stroke="#a855f7" stroke-width="1"/>
+                            <text x="765" y="125" text-anchor="middle" fill="#e9d5ff" font-size="7.5" font-weight="bold">2. Sat.Vapor(2a)</text>
+
+                            <!-- Intermediate Point 3a: 1. Saturated Liquid (x=0) inside Condenser -->
+                            <circle cx="765" cy="260" r="6" fill="#3b82f6" stroke="#ffffff" stroke-width="1.5"/>
+                            <rect x="726" y="268" width="78" height="17" rx="4" fill="#172554" stroke="#3b82f6" stroke-width="1"/>
+                            <text x="765" y="279" text-anchor="middle" fill="#bfdbfe" font-size="7.5" font-weight="bold">1. Sat.Liquid(3a)</text>
+
+                            <!-- Mode A: Air-Cooled Condenser Fan (Split / Air Chiller / VRV) -->
+                            <g id="cond-mode-air">
+                                <g transform="translate(868, 205)">
+                                    <circle cx="0" cy="0" r="34" fill="#1e293b" stroke="#f97316" stroke-width="2.5"/>
+                                    <g class="fan-rotor">
+                                        <path d="M 0 -27 C 11 -27 14 -10 0 0 C -14 -10 -11 -27 0 -27 Z" fill="#fb923c"/>
+                                        <path d="M 27 0 C 27 11 10 14 0 0 C 10 -14 27 -11 27 0 Z" fill="#fb923c"/>
+                                        <path d="M 0 27 C -11 27 -14 10 0 0 C 14 10 11 27 0 27 Z" fill="#fb923c"/>
+                                        <path d="M -27 0 C -27 -11 -10 -14 0 0 C -10 14 -27 11 -27 0 Z" fill="#fb923c"/>
+                                    </g>
+                                    <circle cx="0" cy="0" r="6" fill="#f8fafc"/>
+                                </g>
+                                <path d="M 815 150 L 915 150" stroke="#ef4444" stroke-width="2.5" marker-end="url(#arr-hot)"/>
+                                <text x="868" y="138" text-anchor="middle" fill="#f87171" font-size="9.5" font-weight="bold">ระบายความร้อนออก</text>
+                                <text id="svg-outdoor-air" x="868" y="262" text-anchor="middle" fill="#fdba74" font-size="9.5" class="mono">Ambient: 35.0°C</text>
+                            </g>
+
+                            <!-- Mode B: Water-Cooled Condenser + Cooling Tower Loop (Water Chiller) -->
+                            <g id="cond-mode-water" style="display:none;">
+                                <!-- CWS In -->
+                            <!-- Mode A: Air-Cooled Condenser Fan -->
+                            <g id="cond-mode-air">
+                                <g transform="translate(868, 205)">
+                                    <circle cx="0" cy="0" r="34" fill="#1e293b" stroke="#f97316" stroke-width="2.5"/>
+                                    <g class="fan-rotor">
+                                        <path d="M 0 -27 C 11 -27 14 -10 0 0 C -14 -10 -11 -27 0 -27 Z" fill="#fb923c"/>
+                                        <path d="M 27 0 C 27 11 10 14 0 0 C 10 -14 27 -11 27 0 Z" fill="#fb923c"/>
+                                        <path d="M 0 27 C -11 27 -14 10 0 0 C 14 10 11 27 0 27 Z" fill="#fb923c"/>
+                                        <path d="M -27 0 C -27 -11 -10 -14 0 0 C -10 14 -27 11 -27 0 Z" fill="#fb923c"/>
+                                    </g>
+                                    <circle cx="0" cy="0" r="6" fill="#f8fafc"/>
+                                </g>
+                                <path d="M 815 150 L 915 150" stroke="#ef4444" stroke-width="2.5" marker-end="url(#arr-hot)"/>
+                                <text x="868" y="138" text-anchor="middle" fill="#f87171" font-size="9.5" font-weight="bold">ระบายความร้อนออก</text>
+                                <text id="svg-outdoor-air" x="868" y="262" text-anchor="middle" fill="#fdba74" font-size="9.5" class="mono">Ambient: 35.0°C</text>
+                            </g>
+
+                            <text id="svg-cond-title" x="765" y="357" text-anchor="middle" fill="#fb923c" font-size="11.5" font-weight="bold">คอยล์ร้อน (Condenser)</text>
+                            <text id="svg-cond-sub" x="765" y="371" text-anchor="middle" fill="#94a3b8" font-size="9">(2 → 2a → 3a → 3)</text>
+                        </g>
+
+                        <!-- ==================== CLICKABLE COMPONENT 4: EXPANSION VALVE ==================== -->
+                        <g id="eev-group" class="comp-target" role="button" tabindex="0" aria-label="เลือกวาล์วลดความดัน Expansion Valve">
+                            <rect x="432" y="276" width="106" height="108" rx="14" fill="rgba(234, 179, 8, 0.01)"/>
+                            <rect class="selection-ring" x="432" y="276" width="106" height="108" rx="14" fill="none" stroke="#facc15" stroke-width="2.5" stroke-dasharray="6 3"/>
+
+                            <rect x="455" y="288" width="60" height="60" rx="12" fill="#0f172a" stroke="#eab308" stroke-width="2"/>
+                            <polygon points="465,305 485,318 465,331" fill="#f59e0b"/>
+                            <polygon points="505,305 485,318 505,331" fill="#3b82f6"/>
+                            <line x1="485" y1="318" x2="485" y2="298" stroke="#eab308" stroke-width="2"/>
+                            <rect x="477" y="293" width="16" height="8" rx="2" fill="#eab308"/>
+
+                            <text id="svg-eev-title" x="485" y="363" text-anchor="middle" fill="#facc15" font-size="11" font-weight="bold">วาล์วลดความดัน</text>
+                            <text id="svg-eev-sub" x="485" y="376" text-anchor="middle" fill="#94a3b8" font-size="9">(EEV / Cap Tube 3→4)</text>
+                        </g>
+                    </svg>
+                </div>
+            </section>
+
+            <!-- Bottom Section: Live P-h Diagram + Component Inspector -->
+            <section class="bottom-grid">
+                <!-- Live P-h Diagram Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title" style="color:var(--text-primary); text-transform:none; font-size:0.9rem;">
+                                กราฟความดัน-เอนทาลปีมาตรฐาน (Technical P-h Diagram)
+                                <span id="ph-badge" class="pill" style="background:rgba(56,189,248,0.15); color:var(--accent-sky); margin-left:0.35rem;">R-32 (Daikin Chart)</span>
+                            </h3>
+                            <p style="font-size:0.72rem; color:var(--text-muted);">
+                                1.Sat.Liquid (x=0) → 2.Sat.Vapor (x=1) → 3.Mixture (0&lt;x&lt;1) → 4.Sub-cooled → 5.Superheated
+                            </p>
+                        </div>
+
+                        <div class="ph-controls">
+                            <button type="button" id="btn-play-pause" class="play-btn">⏸ หยุดชั่วคราว</button>
+                            <span class="fixed-spd-badge" title="ความเร็วการเคลื่อนที่ของจุดมาร์คถูกตั้งค่าคงที่ 0.1x">🐢 Speed: 0.1x (Fixed)</span>
+                        </div>
+                    </div>
+
+                    <div class="ph-hud">
+                        <div class="hud-stage">
+                            <span id="hud-dot" class="hud-dot" style="background:#dc2626; color:#dc2626;"></span>
+                            <span id="hud-stage">1→2: คอมเพรสเซอร์ (Compression)</span>
+                        </div>
+                        <div class="hud-metrics">
+                            <span>สถานะ: <strong id="hud-phase" style="color:#dc2626;">5. Superheated Vapor</strong></span>
+                            <span>P: <strong id="hud-p" style="color:var(--accent-sky);">0.94 MPa</strong></span>
+                            <span>T: <strong id="hud-t" style="color:#10b981;">11.5°C</strong></span>
+                            <span>h: <strong id="hud-h" style="color:var(--accent-amber);">522.0 kJ/kg</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="canvas-box">
+                        <canvas id="ph-canvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- Component Engineering Inspector Card -->
+                <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+                    <div>
+                        <div class="card-header" style="border-bottom:1px solid var(--border-color); padding-bottom:0.6rem;">
+                            <span class="card-title">📋 รายละเอียดอุปกรณ์ (Inspector)</span>
+                            <div class="comp-tabs">
+                                <button type="button" class="comp-tab active" data-comp="COMP">1→2 Comp</button>
+                                <button type="button" class="comp-tab" data-comp="COND">2→3 Cond</button>
+                                <button type="button" class="comp-tab" data-comp="EEV">3→4 EEV</button>
+                                <button type="button" class="comp-tab" data-comp="EVAP">4→1 Evap</button>
+                            </div>
+                        </div>
+
+                        <h4 id="insp-title" class="insp-title">คอมเพรสเซอร์ (Compressor : จุดที่ 1 → 2)</h4>
+
+                        <div class="insp-badges">
+                            <span id="insp-process" class="pill" style="background:rgba(239,68,68,0.18); color:#f87171;">สถานะที่ 5: Superheated Vapor</span>
+                            <span id="insp-role" class="pill" style="background:var(--bg-input); color:var(--text-secondary);">เพิ่มความดันและอุณหภูมิ</span>
+                        </div>
+
+                        <p id="insp-desc" class="insp-desc">
+                            ดูดสารทำความเย็นในสถานะที่ 5 (Superheated Vapor ความดันต่ำ) จากคอยล์เย็น แล้วอัดเพิ่มความดันและอุณหภูมิให้สูงขึ้นโดยยังคงเป็นสถานะที่ 5 (Superheated Vapor ความดันสูง) เพื่อส่งไประบายความร้อนที่คอยล์ร้อน
+                        </p>
+
+                        <div class="state-compare">
+                            <div class="state-col">
+                                <div class="state-col-head">ทางเข้า (Inlet State)</div>
+                                <div id="insp-in-name" class="state-col-name" style="color:#f87171;">จุดที่ 1 (ทางเข้า Compressor)</div>
+                                <div id="insp-in-pt" class="state-col-line">P₁: 118 PSIG | T₁: 11.0°C</div>
+                                <div id="insp-in-h" class="state-col-line">h₁ = 521.0 kJ/kg</div>
+                                <div id="insp-in-phase" class="state-col-line" style="font-size:0.68rem; color:var(--text-muted);">สถานะที่ 5: Superheated Vapor</div>
+                            </div>
+                            <div class="state-col">
+                                <div class="state-col-head">ทางออก (Outlet State)</div>
+                                <div id="insp-out-name" class="state-col-name" style="color:#ef4444;">จุดที่ 2 (ทางออก Compressor)</div>
+                                <div id="insp-out-pt" class="state-col-line">P₂: 395 PSIG | T₂: 78.5°C</div>
+                                <div id="insp-out-h" class="state-col-line">h₂ = 568.0 kJ/kg</div>
+                                <div id="insp-out-phase" class="state-col-line" style="font-size:0.68rem; color:var(--text-muted);">สถานะที่ 5: Superheated Vapor</div>
+                            </div>
+                        </div>
+
+                        <div class="field-tip-box">
+                            <strong>🔧 การวิเคราะห์หน้างานและค่าเกจวัด (Field Diagnostic Guide):</strong>
+                            <p id="insp-tip">
+                                ตรวจสอบกระแสไฟ (RLA) และอุณหภูมิท่อ Discharge ไม่ควรเกิน 95–105°C ค่า Superheat ที่ 5–8 K ช่วยระบายความร้อนมอเตอร์และป้องกันของเหลวเข้าคอมเพรสเซอร์
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="energy-footer">
+                        <span>การถ่ายเทพลังงาน (Energy Transfer):</span>
+                        <span id="insp-energy">W_comp = 0.96 kW (3,275 BTU/hr)</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        (function initSplitTypeSimulation() {
+            // =========================================================================
+            // 1. AUTHENTIC DAIKIN P-h DIAGRAM DATA TABLES (R-32 & R-410A FROM PDFs)
+            // =========================================================================
+            const REFRIGERANTS = {
+                R32: {
+                    name: 'R-32',
+                    chartTitle: 'R32 P-h 線図 (Daikin Reference)',
+                    hMin: 50,
+                    hMax: 700,
+                    pMinMPa: 0.1,
+                    pMaxMPa: 10.0,
+                    tCrit: 78.11,
+                    pCritMPa: 5.782,
+                    hCrit: 412.0,
+                    // Exact saturation dome lookup table matching p-h-diagram-R32.pdf
+                    satTable: [
+                        { T: -50, p: 0.110, hf: 116, hg: 496 },
+                        { T: -40, p: 0.176, hf: 131, hg: 501 },
+                        { T: -30, p: 0.273, hf: 147, hg: 506 },
+                        { T: -20, p: 0.406, hf: 163, hg: 510 },
+                        { T: -10, p: 0.583, hf: 180, hg: 514 },
+                        { T:   0, p: 0.813, hf: 198, hg: 517 },
+                        { T:  10, p: 1.107, hf: 217, hg: 519 },
+                        { T:  20, p: 1.475, hf: 236, hg: 520 },
+                        { T:  30, p: 1.928, hf: 257, hg: 519 },
+                        { T:  40, p: 2.478, hf: 279, hg: 515 },
+                        { T:  50, p: 3.141, hf: 303, hg: 508 },
+                        { T:  60, p: 3.933, hf: 330, hg: 497 },
+                        { T:  70, p: 4.877, hf: 363, hg: 477 },
+                        { T:  75, p: 5.415, hf: 386, hg: 456 },
+                        { T: 78.11, p: 5.782, hf: 412, hg: 412 }
+                    ],
+                    cpVapor: 1.08,
+                    cpLiquid: 1.88,
+                    gamma: 1.24,
+                    baseMassFlow: 0.0155
+                },
+                R410A: {
+                    name: 'R-410A',
+                    chartTitle: 'R410A p-h diagram (Reference)',
+                    hMin: 50,
+                    hMax: 550,
+                    pMinMPa: 0.1,
+                    pMaxMPa: 10.0,
+                    tCrit: 71.34,
+                    pCritMPa: 4.901,
+                    hCrit: 368.0,
+                    // Exact saturation dome lookup table matching p-h-diagram-r-410a.pdf
+                    satTable: [
+                        { T: -50, p: 0.109, hf: 132, hg: 402 },
+                        { T: -40, p: 0.175, hf: 145, hg: 407 },
+                        { T: -30, p: 0.270, hf: 158, hg: 411 },
+                        { T: -20, p: 0.400, hf: 172, hg: 416 },
+                        { T: -10, p: 0.573, hf: 186, hg: 420 },
+                        { T:   0, p: 0.799, hf: 200, hg: 423 },
+                        { T:  10, p: 1.086, hf: 215, hg: 426 },
+                        { T:  20, p: 1.444, hf: 231, hg: 427 },
+                        { T:  30, p: 1.885, hf: 248, hg: 427 },
+                        { T:  40, p: 2.421, hf: 266, hg: 424 },
+                        { T:  50, p: 3.065, hf: 286, hg: 418 },
+                        { T:  60, p: 3.835, hf: 310, hg: 407 },
+                        { T:  68, p: 4.560, hf: 337, hg: 391 },
+                        { T: 71.34, p: 4.901, hf: 368, hg: 368 }
+                    ],
+                    cpVapor: 0.96,
+                    cpLiquid: 1.66,
+                    gamma: 1.18,
+                    baseMassFlow: 0.0215
+                }
+            };
+
+            // Piecewise-linear interpolation along the authentic saturation dome table
+            function interpSatByTemp(ref, T) {
+                const tbl = ref.satTable;
+                if (T <= tbl[0].T) return { ...tbl[0] };
+                const last = tbl[tbl.length - 1];
+                if (T >= last.T) return { ...last };
+                for (let i = 0; i < tbl.length - 1; i++) {
+                    const a = tbl[i], b = tbl[i + 1];
+                    if (T >= a.T && T <= b.T) {
+                        const f = (T - a.T) / (b.T - a.T);
+                        // Log-linear interpolation for pressure
+                        const logP = Math.log(a.p) + f * (Math.log(b.p) - Math.log(a.p));
+                        return {
+                            T,
+                            p: Math.exp(logP),
+                            hf: a.hf + f * (b.hf - a.hf),
+                            hg: a.hg + f * (b.hg - a.hg)
+                        };
+                    }
+                }
+                return { ...last };
+            }
+
+            // =========================================================================
+            // 2. APPLICATION STATE (SPLIT-TYPE ONLY, FIXED PARTICLE SPEED = 0.1x)
+            // =========================================================================
+            const FIXED_PARTICLE_SPEED = 0.1; // Fixed slow particle speed requested by user
+
+            const appState = {
+                refrigerant: 'R32',
+                pressureUnit: 'MPA', // 'MPA', 'PSIG', 'BAR'
+                indoorTemp: 25.0,
+                outdoorTemp: 35.0,
+                speedPct: 100,
+                fault: 'NORMAL',
+                selectedComp: 'COMP',
+                highlightedState: null,
+                isPlaying: true,
+                cycleProgress: 0.0,
+                lastTimestamp: 0,
+                results: null
+            };
+
+            // =========================================================================
+            // 3. PRESSURE UNIT CONVERSION & FORMATTING (MPa(abs), PSIG, Bar)
+            // =========================================================================
+            function mpaToPsig(mpaAbs) {
+                return Math.max(0, (mpaAbs - 0.101325) * 145.0377);
+            }
+
+            function mpaToBarGauge(mpaAbs) {
+                return Math.max(0, (mpaAbs - 0.101325) * 10.0);
+            }
+
+            function formatPressure(mpaAbs) {
+                if (appState.pressureUnit === 'PSIG') {
+                    return `${Math.round(mpaToPsig(mpaAbs))} PSIG`;
+                }
+                if (appState.pressureUnit === 'BAR') {
+                    return `${mpaToBarGauge(mpaAbs).toFixed(1)} Bar`;
+                }
+                return `${mpaAbs.toFixed(2)} MPa`;
+            }
+
+            // =========================================================================
+            // 4. THERMODYNAMIC CYCLE SOLVER (5-STATE SPLIT-TYPE CYCLE)
+            // =========================================================================
+            function computeThermodynamics() {
+                const ref = REFRIGERANTS[appState.refrigerant];
+                const speedRatio = appState.speedPct / 100.0;
+                const freqHz = Math.round(60 * speedRatio);
+
+                let tEvap = (appState.indoorTemp - 20.0) + (appState.indoorTemp - 25.0) * 0.25 - (speedRatio - 1.0) * 2.8;
+                let tCond = appState.outdoorTemp + 11.2 + (speedRatio - 1.0) * 3.4;
+                let superheat = 6.5;
+                let subcooling = 5.2;
+                let massFlowFactor = speedRatio;
+                let isentropicEff = 0.77 - Math.abs(speedRatio - 0.85) * 0.07;
+
+                // Apply Fault Perturbations
+                switch (appState.fault) {
+                    case 'LOW_CHARGE':
+                        tEvap -= 6.5;
+                        tCond -= 3.0;
+                        superheat = 15.2;
+                        subcooling = 1.2;
+                        massFlowFactor *= 0.66;
+                        isentropicEff -= 0.05;
+                        break;
+                    case 'DIRTY_CONDENSER':
+                        tEvap += 2.0;
+                        tCond += 11.5;
+                        superheat = 7.2;
+                        subcooling = 2.8;
+                        massFlowFactor *= 0.92;
+                        isentropicEff -= 0.06;
+                        break;
+                    case 'DIRTY_EVAPORATOR':
+                        tEvap -= 7.2;
+                        tCond -= 2.2;
+                        superheat = 1.8;
+                        subcooling = 5.6;
+                        massFlowFactor *= 0.84;
+                        break;
+                    case 'RESTRICTED_EEV':
+                        tEvap -= 8.8;
+                        tCond += 3.5;
+                        superheat = 17.5;
+                        subcooling = 11.4;
+                        massFlowFactor *= 0.60;
+                        isentropicEff -= 0.04;
+                        break;
+                    case 'NORMAL':
+                    default:
+                        break;
+                }
+
+                tEvap = Math.max(-18, Math.min(18, tEvap));
+                tCond = Math.max(tEvap + 14, Math.min(ref.tCrit - 5, tCond));
+
+                const satEvap = interpSatByTemp(ref, tEvap);
+                const satCond = interpSatByTemp(ref, tCond);
+
+                const P1_mpa = satEvap.p;
+                const P2_mpa = satCond.p;
+                const P3_mpa = P2_mpa;
+                const P4_mpa = P1_mpa;
+
+                // State 1: Evaporator Outlet (5. Superheated Vapor)
+                const T1 = tEvap + superheat;
+                const h1 = satEvap.hg + ref.cpVapor * superheat;
+
+                // State 2: Compressor Discharge (5. Superheated Vapor)
+                const pr = Math.max(1.2, P2_mpa / P1_mpa);
+                const expFactor = Math.pow(pr, (ref.gamma - 1) / ref.gamma);
+                const T1_K = T1 + 273.15;
+                const T2_is_K = T1_K * expFactor;
+                const T2_K = T1_K + (T2_is_K - T1_K) / Math.max(0.55, isentropicEff);
+                const T2 = T2_K - 273.15;
+
+                const h2_is = h1 + ref.cpVapor * (T2_is_K - T1_K);
+                const h2 = h1 + (h2_is - h1) / Math.max(0.55, isentropicEff);
+
+                // Intermediate Point 2a: Condenser Dew Point (2. Saturated Vapor, x = 1.0)
+                const T2a = tCond;
+                const h2a = satCond.hg;
+
+                // Intermediate Point 3a: Condenser Bubble Point (1. Saturated Liquid, x = 0.0)
+                const T3a = tCond;
+                const h3a = satCond.hf;
+
+                // State 3: Condenser Outlet (4. Sub-cooled Liquid)
+                const T3 = tCond - subcooling;
+                const h3 = h3a - ref.cpLiquid * subcooling;
+
+                // State 4: Expansion Valve Outlet (3. Mixture, h4 = h3)
+                const T4 = tEvap;
+                const h4 = h3;
+                const qualityX4 = Math.min(0.95, Math.max(0.05, (h4 - satEvap.hf) / Math.max(10, satEvap.hg - satEvap.hf)));
+
+                // Intermediate Point 4a: Evaporator Dry Saturated Point (2. Saturated Vapor, x = 1.0)
+                const T4a = tEvap;
+                const h4a = satEvap.hg;
+
+                // Mass Flow & Energy Transfer
+                const mDot = ref.baseMassFlow * massFlowFactor;
+                const capacityKW = Math.max(0.5, mDot * (h1 - h4));
+                const capacityBTU = capacityKW * 3412.14;
+                const capacityRT = capacityKW / 3.51685;
+                const powerKW = Math.max(0.2, mDot * (h2 - h1));
+                const condHeatKW = capacityKW + powerKW;
+                const cop = capacityKW / powerKW;
+
+                const airDeltaT = appState.fault === 'DIRTY_EVAPORATOR' ? 14.5 : (11.5 * Math.min(1.2, speedRatio));
+                const supplyAirTemp = Math.max(4.0, appState.indoorTemp - Math.min(16.0, airDeltaT));
+
+                appState.results = {
+                    freqHz,
+                    tEvap,
+                    tCond,
+                    superheat,
+                    subcooling,
+                    P1_mpa,
+                    P2_mpa,
+                    P3_mpa,
+                    P4_mpa,
+                    T1,
+                    T2,
+                    T2a,
+                    T3a,
+                    T3,
+                    T4,
+                    T4a,
+                    h1,
+                    h2,
+                    h2a,
+                    h3a,
+                    h3,
+                    h4,
+                    h4a,
+                    qualityX4,
+                    mDot,
+                    capacityKW,
+                    capacityBTU,
+                    capacityRT,
+                    powerKW,
+                    condHeatKW,
+                    cop,
+                    supplyAirTemp
+                };
+            }
+
+            // =========================================================================
+            // 5. UPDATE ALL UI READOUTS, SVG SCHEMATIC & INSPECTOR
+            // =========================================================================
+            function updateUI() {
+                computeThermodynamics();
+                const r = appState.results;
+                const ref = REFRIGERANTS[appState.refrigerant];
+
+                // Update Header & Schematic Title
+                document.getElementById('header-sys-badge').textContent = `Split-Type A/C (${ref.name})`;
+                document.getElementById('schematic-heading').textContent = `แผนภาพวงจรสารทำความเย็นระบบปรับอากาศ Split-Type (${ref.name})`;
+
+                // Update Slider Readouts
+                document.getElementById('readout-indoor').textContent = `${appState.indoorTemp.toFixed(1)} °C`;
+                document.getElementById('readout-outdoor').textContent = `${appState.outdoorTemp.toFixed(1)} °C`;
+                document.getElementById('readout-speed').textContent = `${appState.speedPct}% (${r.freqHz} Hz)`;
+
+                // Update Top KPI Cards
+                document.getElementById('kpi-suction-p').textContent = formatPressure(r.P1_mpa);
+                document.getElementById('kpi-evap-tsat').textContent = `Tsat: ${r.tEvap.toFixed(1)} °C`;
+
+                document.getElementById('kpi-discharge-p').textContent = formatPressure(r.P2_mpa);
+                document.getElementById('kpi-cond-tsat').textContent = `Tsat: ${r.tCond.toFixed(1)} °C`;
+
+                document.getElementById('kpi-superheat').textContent = `${r.superheat.toFixed(1)} K`;
+                const shStatus = document.getElementById('kpi-sh-status');
+                if (r.superheat < 3.5) {
+                    shStatus.textContent = 'ต่ำเกินไป (Floodback!)';
+                    shStatus.style.color = '#f43f5e';
+                } else if (r.superheat > 10.0) {
+                    shStatus.textContent = 'สูงเกินไป (Starved)';
+                    shStatus.style.color = '#f59e0b';
+                } else {
+                    shStatus.textContent = 'ปกติ (5–8 K)';
+                    shStatus.style.color = '#10b981';
+                }
+
+                document.getElementById('kpi-subcooling').textContent = `${r.subcooling.toFixed(1)} K`;
+                const scStatus = document.getElementById('kpi-sc-status');
+                if (r.subcooling < 2.5) {
+                    scStatus.textContent = 'ต่ำเกินไป (Flash Gas)';
+                    scStatus.style.color = '#f59e0b';
+                } else if (r.subcooling > 9.0) {
+                    scStatus.textContent = 'สูงเกินไป (Over/Blocked)';
+                    scStatus.style.color = '#f43f5e';
+                } else {
+                    scStatus.textContent = 'ปกติ (4–7 K)';
+                    scStatus.style.color = '#10b981';
+                }
+
+                document.getElementById('kpi-cap-btu').textContent = `${Math.round(r.capacityBTU).toLocaleString()} BTU/h`;
+                document.getElementById('kpi-cap-kw').textContent = `${r.capacityKW.toFixed(2)} kWth (${r.capacityRT.toFixed(2)} RT)`;
+
+                document.getElementById('kpi-cop').textContent = `${r.cop.toFixed(2)} COP`;
+                document.getElementById('kpi-power').textContent = `Power: ${r.powerKW.toFixed(2)} kW`;
+
+                // Update State Point Badges on SVG
+                document.getElementById('svg-t1').textContent = `${r.T1.toFixed(1)}°C`;
+                document.getElementById('svg-p1').textContent = formatPressure(r.P1_mpa);
+
+                document.getElementById('svg-t2').textContent = `${r.T2.toFixed(1)}°C`;
+                document.getElementById('svg-p2').textContent = formatPressure(r.P2_mpa);
+
+                document.getElementById('svg-t3').textContent = `${r.T3.toFixed(1)}°C`;
+                document.getElementById('svg-p3').textContent = formatPressure(r.P3_mpa);
+
+                document.getElementById('svg-s4-label').textContent = `3. Mixture (x=${r.qualityX4.toFixed(2)})`;
+                document.getElementById('svg-t4').textContent = `${r.T4.toFixed(1)}°C`;
+                document.getElementById('svg-p4').textContent = formatPressure(r.P4_mpa);
+
+                // Update Fluid Temperatures on SVG
+                document.getElementById('svg-return-air').textContent = `${appState.indoorTemp.toFixed(1)}°C`;
+                document.getElementById('svg-supply-air').textContent = `${r.supplyAirTemp.toFixed(1)}°C`;
+                document.getElementById('svg-outdoor-air').textContent = `Ambient: ${appState.outdoorTemp.toFixed(1)}°C`;
+                document.getElementById('svg-comp-hz').textContent = `${r.freqHz}Hz`;
+
+                // Update Pipe & Fan Animation Speeds
+                const effectiveMult = appState.speedPct / 100;
+                const pipeSec = Math.max(0.3, 1.1 / Math.max(0.25, effectiveMult));
+                const fanSec = Math.max(0.3, 1.2 / Math.max(0.25, effectiveMult));
+
+                document.querySelectorAll('.pipe-flow').forEach(el => {
+                    el.style.setProperty('--flow-duration', `${pipeSec.toFixed(2)}s`);
+                    el.style.animationPlayState = appState.isPlaying ? 'running' : 'paused';
+                });
+                document.querySelectorAll('.fan-rotor').forEach(el => {
+                    el.style.setProperty('--fan-duration', `${fanSec.toFixed(2)}s`);
+                    el.style.animationPlayState = appState.isPlaying ? 'running' : 'paused';
+                });
+
+                // Update P-h Badge
+                document.getElementById('ph-badge').textContent = `${ref.chartTitle}`;
+
+                // Update Fault Diagnostic Box & Inspector
+                updateFaultAlertBox();
+                updateInspectorPanel();
+                drawPhCanvas();
+            }
+
+            function updateFaultAlertBox() {
+                const box = document.getElementById('diag-alert');
+                const title = document.getElementById('diag-alert-title');
+                const desc = document.getElementById('diag-alert-desc');
+
+                const messages = {
+                    NORMAL: {
+                        warn: false,
+                        title: '● สถานะระบบ: ทำงานปกติสมบูรณ์ (Normal)',
+                        desc: 'ความดันด้านดูด (Suction) และด้านอัด (Discharge) อยู่ในเกณฑ์มาตรฐาน ค่า Superheat (5–8 K) และ Subcooling (4–7 K) สมดุล ระบบแลกเปลี่ยนความร้อนทั้ง 5 สถานะทำงานเต็มประสิทธิภาพ'
+                    },
+                    LOW_CHARGE: {
+                        warn: true,
+                        title: '▲ อาการผิดปกติ: สารทำความเย็นขาด/รั่ว (Low Charge)',
+                        desc: 'ความดันด้านดูดและด้านอัดต่ำกว่าปกติ ค่า Superheat สูงจัด (> 14 K) เพราะน้ำยาเดือดหมดก่อนถึงปลายคอยล์เย็น และค่า Subcooling ต่ำมาก (< 2 K) เกิดฟองก๊าซในท่อของเหลว'
+                    },
+                    DIRTY_CONDENSER: {
+                        warn: true,
+                        title: '▲ อาการผิดปกติ: คอยล์ร้อนสกปรก/ระบายไม่ดี (High Head)',
+                        desc: 'ความดันด้านอัด (Head Pressure) และอุณหภูมิกลั่นตัวพุ่งสูงผิดปกติ คอมเพรสเซอร์กินกระแสไฟสูง (High Amps) ประสิทธิภาพ COP ลดลง ควรล้างแผงคอยล์ร้อนและพัดลมระบายอากาศ'
+                    },
+                    DIRTY_EVAPORATOR: {
+                        warn: true,
+                        title: '▲ อาการผิดปกติ: คอยล์เย็นตัน/ฟิลเตอร์สกปรก (Low Airflow)',
+                        desc: 'ความดันด้านดูดต่ำ อุณหภูมิระเหยลดต่ำเสี่ยงน้ำแข็งเกาะคอยล์เย็น และค่า Superheat ต่ำมาก (< 2 K) เสี่ยงน้ำยาเหลวไหลกลับเข้าคอมเพรสเซอร์ (Liquid Floodback)'
+                    },
+                    RESTRICTED_EEV: {
+                        warn: true,
+                        title: '▲ อาการผิดปกติ: วาล์วลดความดัน/แคปทิ้วอุดตัน (Restricted)',
+                        desc: 'ความดันด้านดูดตกต่ำมากและค่า Superheat สูงจัด ขณะที่สารทำความเย็นเหลวไปอั้นสะสมในคอยล์ร้อนทำให้ค่า Subcooling สูงผิดปกติ (> 10 K) ท่อหลังวาล์วเย็นจัดเป็นน้ำแข็ง'
+                    }
+                };
+
+                const info = messages[appState.fault] || messages.NORMAL;
+                box.className = info.warn ? 'diag-alert warning' : 'diag-alert';
+                title.textContent = info.title;
+                desc.textContent = info.desc;
+            }
+
+            // =========================================================================
+            // 6. COMPONENT SELECTION & ENGINEERING INSPECTOR
+            // =========================================================================
+            function selectComponent(compKey) {
+                if (!compKey) return;
+                appState.selectedComp = compKey;
+
+                const map = {
+                    COMP: 'comp-group',
+                    COND: 'cond-group',
+                    EEV: 'eev-group',
+                    EVAP: 'evap-group'
+                };
+
+                Object.entries(map).forEach(([key, svgId]) => {
+                    const el = document.getElementById(svgId);
+                    if (el) el.classList.toggle('selected-comp', key === compKey);
+                });
+
+                document.querySelectorAll('.comp-tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.comp === compKey);
+                });
+
+                updateInspectorPanel();
+            }
+
+            function updateInspectorPanel() {
+                const r = appState.results;
+                if (!r) return;
+                const ref = REFRIGERANTS[appState.refrigerant];
+
+                const tipsByCompAndFault = {
+                    COMP: {
+                        NORMAL: `คอมเพรสเซอร์ Split-Type (${ref.name}) อัดไออิ่มตัวยิ่งยวดจาก ${formatPressure(r.P1_mpa)} ไปที่ ${formatPressure(r.P2_mpa)} — ค่า Superheat 5–8 K ช่วยระบายความร้อนมอเตอร์และป้องกันของเหลวเข้าห้องอัด`,
+                        LOW_CHARGE: '⚠️ น้ำยาขาดทำให้ก๊าซดูดกลับร้อนจัด (High Superheat) มอเตอร์คอมเพรสเซอร์ระบายความร้อนได้ไม่ดี เสี่ยงโอเวอร์ฮีทตัดการทำงาน',
+                        DIRTY_CONDENSER: '⚠️ อัตราส่วนกำลังอัด (Compression Ratio) สูงจัด คอมเพรสเซอร์กินกระแสไฟสูง (High Amps) และอุณหภูมิท่ออัดพุ่งสูง',
+                        DIRTY_EVAPORATOR: '⚠️ ค่า Superheat ต่ำมาก (< 3 K) เสี่ยงเกิดภาวะ Liquid Floodback (น้ำยาเหลวไหลกลับเข้าคอมเพรสเซอร์)',
+                        RESTRICTED_EEV: '⚠️ ความดันด้านดูดต่ำมาก ปริมาณสารทำความเย็นไหลผ่านน้อย คอมเพรสเซอร์เกิดความร้อนสะสมสูง'
+                    },
+                    COND: {
+                        NORMAL: `คอยล์ร้อนระบายความร้อนสู่อากาศภายนอก (${appState.outdoorTemp.toFixed(1)}°C) ลดอุณหภูมิจนได้ Subcooling ~${r.subcooling.toFixed(1)} K`,
+                        LOW_CHARGE: '⚠️ สารทำความเย็นในคอยล์ร้อนไม่พอเกิดการควบแน่นเต็มที่ ค่า Subcooling ต่ำมาก (< 2 K) เกิดฟองก๊าซ (Flash Gas) ในท่อของเหลว',
+                        DIRTY_CONDENSER: '⚠️ การระบายความร้อนติดขัด ทำให้ความดันด้านอัด (Head Pressure) และอุณหภูมิกลั่นตัวพุ่งสูง ควรล้างแผงคอยล์ร้อนทันที',
+                        DIRTY_EVAPORATOR: 'ภาระความร้อนจากห้องลดลง ทำให้คอยล์ร้อนระบายความร้อนออกได้ง่าย ความดันด้านอัดลดต่ำลงเล็กน้อย',
+                        RESTRICTED_EEV: '⚠️ สารทำความเย็นเหลวถูกกักสะสมอยู่ในคอยล์ร้อนจำนวนมาก ทำให้ค่า Subcooling สูงผิดปกติ (> 10 K)'
+                    },
+                    EEV: {
+                        NORMAL: `วาล์วลดความดัน (EEV / Capillary Tube) ลดความดันจาก ${formatPressure(r.P3_mpa)} เหลือ ${formatPressure(r.P4_mpa)} แบบ Isenthalpic (h₃ = h₄ = ${r.h3.toFixed(1)} kJ/kg)`,
+                        LOW_CHARGE: '⚠️ มีฟองก๊าซปนเข้าวาล์วลดความดัน ทำให้ฉีดสารทำความเย็นได้ไม่เต็มประสิทธิภาพ ได้ยินเสียงฟู่ผิดปกติที่วาล์ว',
+                        DIRTY_CONDENSER: 'ความดันตกคร่อมวาล์ว (Pressure Drop) สูงขึ้นตามความดันด้านอัดที่เพิ่มขึ้น',
+                        DIRTY_EVAPORATOR: 'วาล์ว EEV จะหรี่การเปิดลงเพื่อควบคุม Superheat ไม่ให้ต่ำเกินไปจนน้ำยาเหลวท่วมคอยล์เย็น',
+                        RESTRICTED_EEV: '⚠️ เกิดการอุดตันจากความชื้นหรือสิ่งสกปรกในสเตรนเนอร์ ทำให้ความดันตกคร่อมสูงมาก ท่อหลังวาล์วเย็นจัดจนเป็นน้ำแข็ง'
+                    },
+                    EVAP: {
+                        NORMAL: `คอยล์เย็นรับความร้อนจากลมห้อง (${appState.indoorTemp.toFixed(1)}°C) เป่าลมเย็นออกที่ ~${r.supplyAirTemp.toFixed(1)}°C โดยสารทำความเย็นเปลี่ยนจาก Mixture → Sat.Vapor(4a) → Superheated(1)`,
+                        LOW_CHARGE: '⚠️ สารทำความเย็นเดือดหมดตั้งแต่ช่วงต้นของคอยล์เย็น พื้นที่แลกเปลี่ยนความร้อนที่เหลือทำได้เพียงอุ่นก๊าซให้ร้อนขึ้น ความเย็นลดลงชัดเจน',
+                        DIRTY_CONDENSER: 'อุณหภูมิสารทำความเย็นขาเข้า (จุดที่ 4) สูงขึ้น ทำให้ประสิทธิภาพการดึงความร้อน (Refrigeration Effect) ลดลง',
+                        DIRTY_EVAPORATOR: '⚠️ ฟิลเตอร์หรือแผงคอยล์เย็นสกปรก ลมผ่านน้อย อุณหภูมิระเหยตกลงต่ำกว่า 0°C เกิดน้ำแข็งเกาะคอยล์เย็น',
+                        RESTRICTED_EEV: '⚠️ ปริมาณสารทำความเย็นเข้าคอยล์เย็นน้อยมาก ความดันดูดต่ำ อุณหภูมิระเหยต่ำจัดเสี่ยงเป็นน้ำแข็ง'
+                    }
+                };
+
+                const compSpecs = {
+                    COMP: {
+                        title: `คอมเพรสเซอร์ Split-Type (จุดที่ 1 → 2)`,
+                        process: 'สถานะที่ 5: Superheated Vapor ตลอดกระบวนการอัด',
+                        processStyle: 'background:rgba(239,68,68,0.18); color:#f87171;',
+                        role: 'อัดก๊าซเพิ่มความดันและอุณหภูมิ',
+                        desc: 'ดูดสารทำความเย็นในสถานะที่ 5 (Superheated Vapor ความดันต่ำ) จากคอยล์เย็น แล้วอัดเพิ่มความดันและอุณหภูมิให้สูงขึ้นโดยยังคงเป็นสถานะที่ 5 (Superheated Vapor ความดันสูง) เพื่อส่งไประบายความร้อนที่คอยล์ร้อน',
+                        inName: 'จุดที่ 1 (ทางเข้า Compressor)',
+                        inColor: '#f87171',
+                        inPT: `P₁: ${formatPressure(r.P1_mpa)} | T₁: ${r.T1.toFixed(1)}°C`,
+                        inH: `h₁ = ${r.h1.toFixed(1)} kJ/kg`,
+                        inPhase: `สถานะที่ 5: Superheated Vapor (SH: ${r.superheat.toFixed(1)} K)`,
+                        outName: 'จุดที่ 2 (ทางออก Compressor)',
+                        outColor: '#ef4444',
+                        outPT: `P₂: ${formatPressure(r.P2_mpa)} | T₂: ${r.T2.toFixed(1)}°C`,
+                        outH: `h₂ = ${r.h2.toFixed(1)} kJ/kg`,
+                        outPhase: 'สถานะที่ 5: Superheated Vapor (ก๊าซร้อนยวดยิ่ง)',
+                        energy: `W_comp = ${r.powerKW.toFixed(2)} kW (${Math.round(r.powerKW * 3412.14).toLocaleString()} BTU/hr)`
+                    },
+                    COND: {
+                        title: `คอยล์ร้อน Outdoor Unit (2 → 2a → 3a → 3)`,
+                        process: 'ผ่าน 5 สถานะ: Superheated → Sat.Vapor(2a) → Mixture → Sat.Liquid(3a) → Sub-cooled',
+                        processStyle: 'background:rgba(168,85,247,0.18); color:#c084fc;',
+                        role: 'ควบแน่นและลดอุณหภูมิสารทำความเย็น',
+                        desc: `ระบายความร้อนออก 3 ช่วง: (1) ลดความร้อนจากสถานะ 5 (Superheated) จนถึงจุด 2a คือ สถานะ 2 (Saturated Vapor, x=1, h₂ₐ=${r.h2a.toFixed(1)}) (2) ควบแน่นในสถานะ 3 (Mixture) จนถึงจุด 3a คือ สถานะ 1 (Saturated Liquid, x=0, h₃ₐ=${r.h3a.toFixed(1)}) และ (3) ลดอุณหภูมิต่อเป็นสถานะ 4 (Sub-cooled Liquid)`,
+                        inName: 'จุดที่ 2 → 2a (เข้า & จุดอิ่มตัวไอ)',
+                        inColor: '#c084fc',
+                        inPT: `P₂: ${formatPressure(r.P2_mpa)} | T₂: ${r.T2.toFixed(1)}°C → Tsat: ${r.tCond.toFixed(1)}°C`,
+                        inH: `h₂ = ${r.h2.toFixed(1)} → h₂ₐ(Sat.Vap) = ${r.h2a.toFixed(1)} kJ/kg`,
+                        inPhase: 'สถานะ 5 (Superheated) → สถานะ 2 (Saturated Vapor)',
+                        outName: 'จุด 3a → 3 (จุดอิ่มตัวเหลว & ออก)',
+                        outColor: '#fbbf24',
+                        outPT: `Tsat: ${r.tCond.toFixed(1)}°C → T₃: ${r.T3.toFixed(1)}°C`,
+                        outH: `h₃ₐ(Sat.Liq) = ${r.h3a.toFixed(1)} → h₃ = ${r.h3.toFixed(1)} kJ/kg`,
+                        outPhase: `สถานะ 1 (Saturated Liquid) → สถานะ 4 (Sub-cooled, SC: ${r.subcooling.toFixed(1)} K)`,
+                        energy: `Q_cond = ${r.condHeatKW.toFixed(2)} kW (${Math.round(r.condHeatKW * 3412.14).toLocaleString()} BTU/hr)`
+                    },
+                    EEV: {
+                        title: `วาล์วลดความดัน EEV / Cap Tube (จุดที่ 3 → 4)`,
+                        process: 'สถานะที่ 4 (Sub-cooled Liquid) → สถานะที่ 3 (Mixture)',
+                        processStyle: 'background:rgba(245,158,11,0.18); color:#fbbf24;',
+                        role: 'ลดความดันแบบ Isenthalpic (h₃ = h₄)',
+                        desc: 'ลดความดันของสารทำความเย็นจากสถานะที่ 4 (Sub-cooled Liquid ความดันสูง) อย่างรวดเร็วผ่านรูเปิดขนาดเล็ก ทำให้บางส่วนเดือดกลายเป็นไอทันที (Flash Gas) เปลี่ยนเป็นสถานะที่ 3 (Two-Phase Mixture) ที่เย็นจัด',
+                        inName: 'จุดที่ 3 (ทางเข้า Expansion Valve)',
+                        inColor: '#fbbf24',
+                        inPT: `P₃: ${formatPressure(r.P3_mpa)} | T₃: ${r.T3.toFixed(1)}°C`,
+                        inH: `h₃ = ${r.h3.toFixed(1)} kJ/kg`,
+                        inPhase: 'สถานะที่ 4: Sub-cooled Liquid (ของเหลว 100%, x = 0)',
+                        outName: 'จุดที่ 4 (ทางออก Expansion Valve)',
+                        outColor: '#22d3ee',
+                        outPT: `P₄: ${formatPressure(r.P4_mpa)} | T₄: ${r.T4.toFixed(1)}°C`,
+                        outH: `h₄ = ${r.h4.toFixed(1)} kJ/kg`,
+                        outPhase: `สถานะที่ 3: Mixture (ไอ ${(r.qualityX4 * 100).toFixed(0)}% / เหลว ${((1 - r.qualityX4) * 100).toFixed(0)}%)`,
+                        energy: `Δh = 0 kJ/kg (h₃ = h₄ = ${r.h3.toFixed(1)} kJ/kg)`
+                    },
+                    EVAP: {
+                        title: `คอยล์เย็น Indoor Unit (4 → 4a → 1)`,
+                        process: 'สถานะที่ 3 (Mixture) → สถานะที่ 2 (Sat.Vapor 4a) → สถานะที่ 5 (Superheated)',
+                        processStyle: 'background:rgba(6,182,212,0.18); color:#22d3ee;',
+                        role: 'ดูดซับความร้อนจนระเหยเป็นไอ',
+                        desc: `รับความร้อน 2 ช่วง: (1) สารทำความเย็นสถานะ 3 (Mixture) เดือดรับความร้อนแฝงจนกลายเป็นไอทั้งหมดที่จุด 4a คือ สถานะ 2 (Saturated Vapor, x=1, h₄ₐ=${r.h4a.toFixed(1)}) และ (2) รับความร้อนสัมผัสต่อจนเป็นสถานะ 5 (Superheated Vapor) ที่จุด 1`,
+                        inName: 'จุดที่ 4 (ทางเข้า Evaporator)',
+                        inColor: '#22d3ee',
+                        inPT: `P₄: ${formatPressure(r.P4_mpa)} | T₄: ${r.T4.toFixed(1)}°C`,
+                        inH: `h₄ = ${r.h4.toFixed(1)} kJ/kg`,
+                        inPhase: `สถานะที่ 3: Mixture (คุณภาพไอ x = ${r.qualityX4.toFixed(2)})`,
+                        outName: 'จุด 4a → 1 (จุดอิ่มตัวไอ & ทางออก)',
+                        outColor: '#f87171',
+                        outPT: `Tsat: ${r.tEvap.toFixed(1)}°C → T₁: ${r.T1.toFixed(1)}°C`,
+                        outH: `h₄ₐ(Sat.Vap) = ${r.h4a.toFixed(1)} → h₁ = ${r.h1.toFixed(1)} kJ/kg`,
+                        outPhase: `สถานะ 2 (Saturated Vapor) → สถานะ 5 (Superheated, SH: ${r.superheat.toFixed(1)} K)`,
+                        energy: `Q_evap = ${r.capacityKW.toFixed(2)} kW (${Math.round(r.capacityBTU).toLocaleString()} BTU/hr)`
+                    }
+                };
+
+                const spec = compSpecs[appState.selectedComp];
+                document.getElementById('insp-title').textContent = spec.title;
+
+                const procEl = document.getElementById('insp-process');
+                procEl.textContent = spec.process;
+                procEl.style.cssText = spec.processStyle;
+
+                document.getElementById('insp-role').textContent = spec.role;
+                document.getElementById('insp-desc').textContent = spec.desc;
+
+                const inNameEl = document.getElementById('insp-in-name');
+                inNameEl.textContent = spec.inName;
+                inNameEl.style.color = spec.inColor;
+                document.getElementById('insp-in-pt').textContent = spec.inPT;
+                document.getElementById('insp-in-h').textContent = spec.inH;
+                document.getElementById('insp-in-phase').textContent = spec.inPhase;
+
+                const outNameEl = document.getElementById('insp-out-name');
+                outNameEl.textContent = spec.outName;
+                outNameEl.style.color = spec.outColor;
+                document.getElementById('insp-out-pt').textContent = spec.outPT;
+                document.getElementById('insp-out-h').textContent = spec.outH;
+                document.getElementById('insp-out-phase').textContent = spec.outPhase;
+
+                document.getElementById('insp-tip').textContent = tipsByCompAndFault[appState.selectedComp][appState.fault];
+                document.getElementById('insp-energy').textContent = spec.energy;
+            }
+
+            // =========================================================================
+            // 7. AUTHENTIC DAIKIN P-h DIAGRAM RENDERER + 0.1x FIXED MOVING PARTICLE
+            // =========================================================================
+            const STATE_COLORS = {
+                SAT_LIQUID: '#2563eb',   // 1. Saturated Liquid (x = 0)
+                SAT_VAPOR: '#9333ea',    // 2. Saturated Vapor (x = 1)
+                MIXTURE: '#0891b2',      // 3. Mixture (0 < x < 1)
+                SUBCOOLED: '#d97706',    // 4. Sub-cooled Liquid
+                SUPERHEATED: '#dc2626'   // 5. Superheated Vapor
+            };
+
+            function getParticleAtProgress(progress, r) {
+                const seg = Math.floor(progress) % 4;
+                const t = progress - Math.floor(progress);
+
+                if (seg === 0) {
+                    const h = r.h1 + (r.h2 - r.h1) * t;
+                    // Log-linear interpolation in pressure during compression
+                    const logP = Math.log(r.P1_mpa) + t * (Math.log(r.P2_mpa) - Math.log(r.P1_mpa));
+                    const p = Math.exp(logP);
+                    const temp = r.T1 + (r.T2 - r.T1) * t;
+                    return {
+                        h, p, temp,
+                        stateNum: 5,
+                        color: STATE_COLORS.SUPERHEATED,
+                        stage: '1→2: คอมเพรสเซอร์ (Compression)',
+                        stateLabel: '5. Superheated Vapor (ไออิ่มตัวยิ่งยวด)'
+                    };
+                } else if (seg === 1) {
+                    const h = r.h2 + (r.h3 - r.h2) * t;
+                    const p = r.P2_mpa;
+                    const f2a = Math.max(0.06, Math.min(0.4, (r.h2 - r.h2a) / Math.max(1, r.h2 - r.h3)));
+                    const f3a = Math.max(f2a + 0.2, Math.min(0.94, (r.h2 - r.h3a) / Math.max(1, r.h2 - r.h3)));
+
+                    if (Math.abs(t - f2a) < 0.038) {
+                        return {
+                            h: r.h2a, p, temp: r.tCond,
+                            stateNum: 2,
+                            color: STATE_COLORS.SAT_VAPOR,
+                            stage: '2a: จุดอิ่มตัวไอในคอยล์ร้อน (Dew Point)',
+                            stateLabel: '2. Saturated Vapor (ไออิ่มตัว, x = 1.0)'
+                        };
+                    }
+                    if (Math.abs(t - f3a) < 0.038) {
+                        return {
+                            h: r.h3a, p, temp: r.tCond,
+                            stateNum: 1,
+                            color: STATE_COLORS.SAT_LIQUID,
+                            stage: '3a: จุดอิ่มตัวเหลวในคอยล์ร้อน (Bubble Point)',
+                            stateLabel: '1. Saturated Liquid (ของเหลวอิ่มตัว, x = 0.0)'
+                        };
+                    }
+                    if (t < f2a) {
+                        const localT = t / f2a;
+                        return {
+                            h, p, temp: r.T2 + (r.tCond - r.T2) * localT,
+                            stateNum: 5,
+                            color: STATE_COLORS.SUPERHEATED,
+                            stage: '2→2a: ลดความร้อนยวดยิ่ง (Desuperheating)',
+                            stateLabel: '5. Superheated Vapor (ไออิ่มตัวยิ่งยวด)'
+                        };
+                    } else if (t < f3a) {
+                        const xQual = Math.max(0.01, Math.min(0.99, (h - r.h3a) / Math.max(1, r.h2a - r.h3a)));
+                        return {
+                            h, p, temp: r.tCond,
+                            stateNum: 3,
+                            color: STATE_COLORS.MIXTURE,
+                            stage: '2a→3a: ควบแน่นเปลี่ยนสถานะ (Condensing)',
+                            stateLabel: `3. Mixture (ของผสมของเหลว+ไอ, x = ${xQual.toFixed(2)})`
+                        };
+                    } else {
+                        const localT = (t - f3a) / Math.max(0.01, 1 - f3a);
+                        return {
+                            h, p, temp: r.tCond + (r.T3 - r.tCond) * localT,
+                            stateNum: 4,
+                            color: STATE_COLORS.SUBCOOLED,
+                            stage: '3a→3: ลดอุณหภูมิของเหลว (Subcooling)',
+                            stateLabel: '4. Sub-cooled Liquid (ของเหลวเย็นยิ่งยวด)'
+                        };
+                    }
+                } else if (seg === 2) {
+                    const h = r.h3;
+                    const logP = Math.log(r.P3_mpa) + t * (Math.log(r.P4_mpa) - Math.log(r.P3_mpa));
+                    const p = Math.exp(logP);
+                    const temp = r.T3 + (r.T4 - r.T3) * t;
+                    if (t < 0.22) {
+                        return {
+                            h, p, temp,
+                            stateNum: 4,
+                            color: STATE_COLORS.SUBCOOLED,
+                            stage: '3→4: วาล์วลดความดัน (Expansion Valve)',
+                            stateLabel: '4. Sub-cooled Liquid (ของเหลวเย็นยิ่งยวด)'
+                        };
+                    }
+                    const xCur = (r.qualityX4 * ((t - 0.22) / 0.78));
+                    return {
+                        h, p, temp,
+                        stateNum: 3,
+                        color: STATE_COLORS.MIXTURE,
+                        stage: '3→4: วาล์วลดความดัน (Flashing Expansion)',
+                        stateLabel: `3. Mixture (ของผสมของเหลว+ไอ, x = ${xCur.toFixed(2)})`
+                    };
+                } else {
+                    const h = r.h4 + (r.h1 - r.h4) * t;
+                    const p = r.P4_mpa;
+                    const f4a = Math.max(0.55, Math.min(0.94, (r.h4a - r.h4) / Math.max(1, r.h1 - r.h4)));
+
+                    if (Math.abs(t - f4a) < 0.038) {
+                        return {
+                            h: r.h4a, p, temp: r.tEvap,
+                            stateNum: 2,
+                            color: STATE_COLORS.SAT_VAPOR,
+                            stage: '4a: จุดอิ่มตัวไอในคอยล์เย็น (Dry Saturated)',
+                            stateLabel: '2. Saturated Vapor (ไออิ่มตัว, x = 1.0)'
+                        };
+                    }
+                    if (t < f4a) {
+                        const xCur = r.qualityX4 + (1.0 - r.qualityX4) * (t / f4a);
+                        return {
+                            h, p, temp: r.tEvap,
+                            stateNum: 3,
+                            color: STATE_COLORS.MIXTURE,
+                            stage: '4→4a: เดือดรับความร้อน (Evaporating)',
+                            stateLabel: `3. Mixture (ของผสมของเหลว+ไอ, x = ${Math.min(0.99, xCur).toFixed(2)})`
+                        };
+                    } else {
+                        const localT = (t - f4a) / Math.max(0.01, 1 - f4a);
+                        return {
+                            h, p, temp: r.tEvap + (r.T1 - r.tEvap) * localT,
+                            stateNum: 5,
+                            color: STATE_COLORS.SUPERHEATED,
+                            stage: '4a→1: รับความร้อนยวดยิ่ง (Superheating)',
+                            stateLabel: '5. Superheated Vapor (ไออิ่มตัวยิ่งยวด)'
+                        };
+                    }
+                }
+            }
+
+            function drawPhCanvas() {
+                const canvas = document.getElementById('ph-canvas');
+                if (!canvas || !appState.results) return;
+
+                const box = canvas.parentElement;
+                const W = box.clientWidth;
+                const H = box.clientHeight;
+                if (W <= 0 || H <= 0) return;
+
+                const dpr = window.devicePixelRatio || 1;
+                if (canvas.width !== Math.round(W * dpr) || canvas.height !== Math.round(H * dpr)) {
+                    canvas.width = Math.round(W * dpr);
+                    canvas.height = Math.round(H * dpr);
+                }
+
+                const ctx = canvas.getContext('2d');
+                ctx.save();
+                ctx.scale(dpr, dpr);
+
+                // Crisp white technical chart paper background matching PDFs
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, W, H);
+
+                const padL = 56, padR = 20, padT = 18, padB = 36;
+                const plotW = W - padL - padR;
+                const plotH = H - padT - padB;
+
+                const ref = REFRIGERANTS[appState.refrigerant];
+                const r = appState.results;
+                const hl = appState.highlightedState;
+
+                const hMin = ref.hMin; // 50
+                const hMax = ref.hMax; // 700 (R32) or 550 (R410A)
+                const pMin = ref.pMinMPa; // 0.1 MPa
+                const pMax = ref.pMaxMPa; // 10.0 MPa
+
+                const mapX = (h) => padL + ((h - hMin) / (hMax - hMin)) * plotW;
+                const mapY = (pMpa) => {
+                    const logP = Math.log10(Math.max(pMin, Math.min(pMax, pMpa)));
+                    const logMin = Math.log10(pMin);
+                    const logMax = Math.log10(pMax);
+                    return padT + plotH - ((logP - logMin) / (logMax - logMin)) * plotH;
+                };
+
+                // -----------------------------------------------------------------
+                // A. LOGARITHMIC PRESSURE GRID (0.1 to 10 MPa(abs) matching PDFs)
+                // -----------------------------------------------------------------
+                const logTicks = [
+                    0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
+                    1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0
+                ];
+                const majorPTicks = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+                logTicks.forEach(p => {
+                    const y = mapY(p);
+                    const isMajor = majorPTicks.includes(p);
+                    ctx.beginPath();
+                    ctx.moveTo(padL, y);
+                    ctx.lineTo(W - padR, y);
+                    ctx.strokeStyle = isMajor ? '#94a3b8' : '#e2e8f0';
+                    ctx.lineWidth = isMajor ? 0.85 : 0.5;
+                    ctx.stroke();
+
+                    if (isMajor) {
+                        ctx.fillStyle = '#0f172a';
+                        ctx.font = 'bold 10px ui-monospace, monospace';
+                        ctx.textAlign = 'right';
+                        ctx.fillText(p.toString(), padL - 6, y + 3.5);
+                    }
+                });
+
+                // -----------------------------------------------------------------
+                // B. ENTHALPY GRID (Every 10 kJ/kg minor, every 50 kJ/kg major)
+                // -----------------------------------------------------------------
+                for (let h = hMin; h <= hMax; h += 10) {
+                    const x = mapX(h);
+                    const isMajor = (h % 50 === 0);
+                    ctx.beginPath();
+                    ctx.moveTo(x, padT);
+                    ctx.lineTo(x, H - padB);
+                    ctx.strokeStyle = isMajor ? '#94a3b8' : '#e2e8f0';
+                    ctx.lineWidth = isMajor ? 0.85 : 0.5;
+                    ctx.stroke();
+
+                    if (isMajor) {
+                        ctx.fillStyle = '#0f172a';
+                        ctx.font = 'bold 10px ui-monospace, monospace';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(h.toString(), x, H - padB + 14);
+                    }
+                }
+
+                // Heavy Black Outer Chart Border (matching Daikin P-h Chart frame)
+                ctx.strokeStyle = '#0f172a';
+                ctx.lineWidth = 1.8;
+                ctx.strokeRect(padL, padT, plotW, plotH);
+
+                // Chart Corner Title Box (matching "R32 P-h 線図" / "R410A p-h diagram")
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+                ctx.fillRect(padL + 10, padT + 8, 128, 38);
+                ctx.strokeStyle = '#cbd5e1';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(padL + 10, padT + 8, 128, 38);
+                ctx.fillStyle = '#0f172a';
+                ctx.font = 'bold 13px system-ui, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(ref.name, padL + 74, padT + 24);
+                ctx.font = '11px system-ui, sans-serif';
+                ctx.fillText(appState.refrigerant === 'R32' ? 'P-h 線図 (Diagram)' : 'p-h diagram', padL + 74, padT + 39);
+
+                // Axis Titles
+                ctx.fillStyle = '#0f172a';
+                ctx.font = 'bold 11px system-ui, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('比エンタルピー Enthalpy, h [kJ/kg]', padL + plotW / 2, H - 6);
+
+                ctx.save();
+                ctx.translate(14, padT + plotH / 2);
+                ctx.rotate(-Math.PI / 2);
+                ctx.fillText('圧力 Pressure, P [MPa(abs)]', 0, 0);
+                ctx.restore();
+
+                // -----------------------------------------------------------------
+                // C. SATURATION DOME, QUALITY LINES (x=0.1..0.9), ISOTHERMS & S-LINES
+                // -----------------------------------------------------------------
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(padL, padT, plotW, plotH);
+                ctx.clip();
+
+                // 1. Constant Quality Lines (x = 0.1 to 0.9) inside Two-Phase Dome
+                for (let q = 0.1; q <= 0.91; q += 0.1) {
+                    ctx.beginPath();
+                    ref.satTable.forEach((row, idx) => {
+                        const hx = row.hf + q * (row.hg - row.hf);
+                        const px = mapX(hx);
+                        const py = mapY(row.p);
+                        if (idx === 0) ctx.moveTo(px, py);
+                        else ctx.lineTo(px, py);
+                    });
+                    ctx.setLineDash([4, 3]);
+                    ctx.strokeStyle = 'rgba(71, 85, 105, 0.55)';
+                    ctx.lineWidth = 0.8;
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    // Label x = 0.1 .. 0.9 around P = 0.6 MPa
+                    const row06 = interpSatByTemp(ref, -10);
+                    const lx = mapX(row06.hf + q * (row06.hg - row06.hf));
+                    const ly = mapY(row06.p);
+                    ctx.fillStyle = '#475569';
+                    ctx.font = '8.5px ui-monospace, monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(q === 0.1 ? 'x=0.1' : q.toFixed(1), lx, ly - 3);
+                }
+
+                // 2. Constant Temperature Isotherms (-40°C to 140°C)
+                const isoTemps = [-40, -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 100, 120];
+                isoTemps.forEach(Tiso => {
+                    ctx.beginPath();
+                    if (Tiso < ref.tCrit) {
+                        const sat = interpSatByTemp(ref, Tiso);
+                        // Subcooled liquid branch (nearly vertical)
+                        const xTop = mapX(sat.hf - 1.2);
+                        const yTop = mapY(pMax);
+                        const xLiq = mapX(sat.hf);
+                        const ySat = mapY(sat.p);
+                        const xVap = mapX(sat.hg);
+
+                        ctx.moveTo(xTop, yTop);
+                        ctx.lineTo(xLiq, ySat);
+                        // Horizontal two-phase line
+                        ctx.lineTo(xVap, ySat);
+                        // Superheated vapor branch curving downward-right
+                        const steps = 12;
+                        for (let s = 1; s <= steps; s++) {
+                            const frac = s / steps;
+                            const pCur = sat.p * Math.pow(pMin / sat.p, frac);
+                            const hCur = sat.hg + (1 - Math.pow(pCur / sat.p, 0.22)) * 26;
+                            ctx.lineTo(mapX(hCur), mapY(pCur));
+                        }
+
+                        ctx.strokeStyle = 'rgba(100, 116, 139, 0.42)';
+                        ctx.lineWidth = 0.75;
+                        ctx.stroke();
+
+                        // Temperature label inside dome near liquid line
+                        if (Tiso >= -40 && Tiso <= 70 && Tiso % 10 === 0) {
+                            ctx.fillStyle = '#334155';
+                            ctx.font = '8.5px ui-monospace, monospace';
+                            ctx.textAlign = 'left';
+                            ctx.fillText(`${Tiso}`, xLiq + 4, ySat - 2);
+                        }
+                    } else {
+                        // Supercritical isotherms (80°C, 100°C, 120°C)
+                        const steps = 24;
+                        for (let s = 0; s <= steps; s++) {
+                            const frac = s / steps;
+                            const pCur = pMax * Math.pow(pMin / pMax, frac);
+                            const hBase = ref.hCrit + (Tiso - ref.tCrit) * 1.45;
+                            const hCur = hBase + (1 - Math.pow(pCur / pMax, 0.28)) * 95;
+                            const px = mapX(hCur);
+                            const py = mapY(pCur);
+                            if (s === 0) ctx.moveTo(px, py);
+                            else ctx.lineTo(px, py);
+                        }
+                        ctx.strokeStyle = 'rgba(100, 116, 139, 0.42)';
+                        ctx.lineWidth = 0.75;
+                        ctx.stroke();
+                    }
+                });
+
+                // 3. Constant Entropy Lines (s) in Superheated Region
+                for (let sOffset = 0; sOffset <= 140; sOffset += 25) {
+                    ctx.beginPath();
+                    const hStart = (appState.refrigerant === 'R32' ? 500 : 405) + sOffset;
+                    const pStart = 0.1;
+                    const pEnd = 10.0;
+                    const steps = 16;
+                    for (let i = 0; i <= steps; i++) {
+                        const f = i / steps;
+                        const pCur = pStart * Math.pow(pEnd / pStart, f);
+                        const hCur = hStart + Math.log(pCur / pStart) * 32;
+                        const px = mapX(hCur);
+                        const py = mapY(pCur);
+                        if (i === 0) ctx.moveTo(px, py);
+                        else ctx.lineTo(px, py);
+                    }
+                    ctx.strokeStyle = 'rgba(71, 85, 105, 0.35)';
+                    ctx.lineWidth = 0.75;
+                    ctx.stroke();
+                }
+
+                // 4. Two-Phase Dome Fill (3. Mixture Region)
+                ctx.beginPath();
+                ref.satTable.forEach((row, idx) => {
+                    const px = mapX(row.hf);
+                    const py = mapY(row.p);
+                    if (idx === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                });
+                for (let i = ref.satTable.length - 1; i >= 0; i--) {
+                    const row = ref.satTable[i];
+                    ctx.lineTo(mapX(row.hg), mapY(row.p));
+                }
+                ctx.closePath();
+                ctx.fillStyle = hl === 3 ? 'rgba(8, 145, 178, 0.22)' : 'rgba(8, 145, 178, 0.06)';
+                ctx.fill();
+
+                // 5. Left Saturation Curve: 1. Saturated Liquid Line (x = 0)
+                ctx.beginPath();
+                ref.satTable.forEach((row, idx) => {
+                    const px = mapX(row.hf);
+                    const py = mapY(row.p);
+                    if (idx === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                });
+                ctx.strokeStyle = hl === 1 ? '#2563eb' : '#0f172a';
+                ctx.lineWidth = hl === 1 ? 4.0 : 2.1;
+                ctx.stroke();
+
+                // 6. Right Saturation Curve: 2. Saturated Vapor Line (x = 1)
+                ctx.beginPath();
+                for (let i = ref.satTable.length - 1; i >= 0; i--) {
+                    const row = ref.satTable[i];
+                    const px = mapX(row.hg);
+                    const py = mapY(row.p);
+                    if (i === ref.satTable.length - 1) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                ctx.strokeStyle = hl === 2 ? '#9333ea' : '#0f172a';
+                ctx.lineWidth = hl === 2 ? 4.0 : 2.1;
+                ctx.stroke();
+
+                // 7. Critical Point Solid Circle (matching Daikin P-h PDF)
+                ctx.beginPath();
+                ctx.arc(mapX(ref.hCrit), mapY(ref.pCritMPa), 4.5, 0, Math.PI * 2);
+                ctx.fillStyle = '#0f172a';
+                ctx.fill();
+
+                // -----------------------------------------------------------------
+                // D. OVERLAY LIVE 5-STATE REFRIGERATION CYCLE (1->2->2a->3a->3->4->4a->1)
+                // -----------------------------------------------------------------
+                const pt1 = { x: mapX(r.h1), y: mapY(r.P1_mpa) };
+                const pt2 = { x: mapX(r.h2), y: mapY(r.P2_mpa) };
+                const pt2a = { x: mapX(r.h2a), y: mapY(r.P2_mpa) };
+                const pt3a = { x: mapX(r.h3a), y: mapY(r.P3_mpa) };
+                const pt3 = { x: mapX(r.h3), y: mapY(r.P3_mpa) };
+                const pt4 = { x: mapX(r.h4), y: mapY(r.P4_mpa) };
+                const pt4a = { x: mapX(r.h4a), y: mapY(r.P4_mpa) };
+
+                // Process 1 -> 2 Compression (5. Superheated Vapor)
+                ctx.beginPath();
+                ctx.moveTo(pt1.x, pt1.y);
+                ctx.lineTo(pt2.x, pt2.y);
+                ctx.strokeStyle = STATE_COLORS.SUPERHEATED;
+                ctx.lineWidth = hl === 5 ? 5.2 : 3.2;
+                ctx.stroke();
+
+                // Process 2 -> 2a Desuperheating (5. Superheated Vapor)
+                ctx.beginPath();
+                ctx.moveTo(pt2.x, pt2.y);
+                ctx.lineTo(pt2a.x, pt2a.y);
+                ctx.strokeStyle = STATE_COLORS.SUPERHEATED;
+                ctx.lineWidth = hl === 5 ? 5.2 : 3.2;
+                ctx.stroke();
+
+                // Process 2a -> 3a Condensing (3. Mixture)
+                ctx.beginPath();
+                ctx.moveTo(pt2a.x, pt2a.y);
+                ctx.lineTo(pt3a.x, pt3a.y);
+                ctx.strokeStyle = STATE_COLORS.MIXTURE;
+                ctx.lineWidth = hl === 3 ? 5.2 : 3.2;
+                ctx.stroke();
+
+                // Process 3a -> 3 Subcooling (4. Sub-cooled Liquid)
+                ctx.beginPath();
+                ctx.moveTo(pt3a.x, pt3a.y);
+                ctx.lineTo(pt3.x, pt3.y);
+                ctx.strokeStyle = STATE_COLORS.SUBCOOLED;
+                ctx.lineWidth = hl === 4 ? 5.2 : 3.2;
+                ctx.stroke();
+
+                // Process 3 -> 4 Isenthalpic Expansion (4. Sub-cooled -> 3. Mixture)
+                ctx.beginPath();
+                ctx.setLineDash([5, 4]);
+                ctx.moveTo(pt3.x, pt3.y);
+                ctx.lineTo(pt4.x, pt4.y);
+                ctx.strokeStyle = STATE_COLORS.SUBCOOLED;
+                ctx.lineWidth = hl === 4 ? 4.8 : 3.0;
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Process 4 -> 4a Evaporating (3. Mixture)
+                ctx.beginPath();
+                ctx.moveTo(pt4.x, pt4.y);
+                ctx.lineTo(pt4a.x, pt4a.y);
+                ctx.strokeStyle = STATE_COLORS.MIXTURE;
+                ctx.lineWidth = hl === 3 ? 5.2 : 3.2;
+                ctx.stroke();
+
+                // Process 4a -> 1 Superheating (5. Superheated Vapor)
+                ctx.beginPath();
+                ctx.moveTo(pt4a.x, pt4a.y);
+                ctx.lineTo(pt1.x, pt1.y);
+                ctx.strokeStyle = STATE_COLORS.SUPERHEATED;
+                ctx.lineWidth = hl === 5 ? 5.2 : 3.2;
+                ctx.stroke();
+
+                // Plot All 7 State Nodes with High-Contrast Pill Labels
+                const nodes = [
+                    { pt: pt1, label: '1', color: STATE_COLORS.SUPERHEATED, rad: hl === 5 ? 7 : 5.5, dx: 13, dy: 4 },
+                    { pt: pt2, label: '2', color: STATE_COLORS.SUPERHEATED, rad: hl === 5 ? 7 : 5.5, dx: 13, dy: -4 },
+                    { pt: pt2a, label: '2a', color: STATE_COLORS.SAT_VAPOR, rad: hl === 2 ? 7.5 : 5.0, dx: 0, dy: -11 },
+                    { pt: pt3a, label: '3a', color: STATE_COLORS.SAT_LIQUID, rad: hl === 1 ? 7.5 : 5.0, dx: 0, dy: -11 },
+                    { pt: pt3, label: '3', color: STATE_COLORS.SUBCOOLED, rad: hl === 4 ? 7 : 5.5, dx: -13, dy: -4 },
+                    { pt: pt4, label: '4', color: STATE_COLORS.MIXTURE, rad: hl === 3 ? 7 : 5.5, dx: -13, dy: 5 },
+                    { pt: pt4a, label: '4a', color: STATE_COLORS.SAT_VAPOR, rad: hl === 2 ? 7.5 : 5.0, dx: 0, dy: 14 }
+                ];
+
+                nodes.forEach(n => {
+                    ctx.beginPath();
+                    ctx.arc(n.pt.x, n.pt.y, n.rad, 0, Math.PI * 2);
+                    ctx.fillStyle = n.color;
+                    ctx.fill();
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 1.8;
+                    ctx.stroke();
+
+                    // White pill behind node text for sharp legibility on white technical chart
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.88)';
+                    ctx.fillRect(n.pt.x + n.dx - 9, n.pt.y + n.dy - 9, 18, 13);
+                    ctx.fillStyle = '#0f172a';
+                    ctx.font = 'bold 10.5px ui-monospace, monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(n.label, n.pt.x + n.dx, n.pt.y + n.dy + 1);
+                });
+
+                // -----------------------------------------------------------------
+                // E. SLOW-MOVING REFRIGERANT PARTICLE MARKER (FIXED SPEED = 0.1x)
+                // -----------------------------------------------------------------
+                const particle = getParticleAtProgress(appState.cycleProgress, r);
+                const mx = mapX(particle.h);
+                const my = mapY(particle.p);
+
+                // Subtle trailing dots
+                for (let i = 4; i >= 1; i--) {
+                    const trailProg = (appState.cycleProgress - i * 0.035 + 4) % 4;
+                    const trail = getParticleAtProgress(trailProg, r);
+                    ctx.beginPath();
+                    ctx.arc(mapX(trail.h), mapY(trail.p), 6 - i * 0.85, 0, Math.PI * 2);
+                    ctx.fillStyle = trail.color;
+                    ctx.globalAlpha = 0.35 - i * 0.06;
+                    ctx.fill();
+                }
+                ctx.globalAlpha = 1.0;
+
+                // Pulsing outer halo
+                const haloR = 12 + Math.sin(performance.now() / 220) * 2.5;
+                ctx.beginPath();
+                ctx.arc(mx, my, haloR, 0, Math.PI * 2);
+                ctx.fillStyle = particle.color;
+                ctx.globalAlpha = 0.26;
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+
+                // Core marker dot
+                ctx.beginPath();
+                ctx.arc(mx, my, 7.0, 0, Math.PI * 2);
+                ctx.fillStyle = particle.color;
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2.4;
+                ctx.stroke();
+
+                ctx.restore();
+                ctx.restore();
+
+                // Update Live HUD Readout
+                const hudDot = document.getElementById('hud-dot');
+                const hudStage = document.getElementById('hud-stage');
+                const hudPhase = document.getElementById('hud-phase');
+                const hudP = document.getElementById('hud-p');
+                const hudT = document.getElementById('hud-t');
+                const hudH = document.getElementById('hud-h');
+
+                if (hudDot) {
+                    hudDot.style.backgroundColor = particle.color;
+                    hudDot.style.color = particle.color;
+                }
+                if (hudStage) hudStage.textContent = particle.stage;
+                if (hudPhase) {
+                    hudPhase.textContent = particle.stateLabel;
+                    hudPhase.style.color = particle.color;
+                }
+                if (hudP) hudP.textContent = formatPressure(particle.p);
+                if (hudT) hudT.textContent = `${particle.temp.toFixed(1)}°C`;
+                if (hudH) hudH.textContent = `${particle.h.toFixed(1)} kJ/kg`;
+            }
+
+            // =========================================================================
+            // 8. ANIMATION LOOP (FIXED SLOW PARTICLE SPEED = 0.1x)
+            // =========================================================================
+            function animationLoop(timestamp) {
+                if (!appState.lastTimestamp) appState.lastTimestamp = timestamp;
+                const dt = Math.min(0.1, (timestamp - appState.lastTimestamp) / 1000);
+                appState.lastTimestamp = timestamp;
+
+                if (appState.isPlaying) {
+                    // Fixed 0.1x slow motion speed along the 4-process cycle
+                    appState.cycleProgress = (appState.cycleProgress + dt * 0.65 * FIXED_PARTICLE_SPEED) % 4.0;
+                    drawPhCanvas();
+                }
+
+                requestAnimationFrame(animationLoop);
+            }
+
+            // =========================================================================
+            // 9. HELPER TO SWITCH REFRIGERANT MENU (R-32 vs R-410A)
+            // =========================================================================
+            function setRefrigerant(refKey) {
+                if (!REFRIGERANTS[refKey]) return;
+                appState.refrigerant = refKey;
+
+                // Sync both top 2-menu tabs and sidebar buttons
+                document.querySelectorAll('.sys-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.ref === refKey);
+                });
+                document.querySelectorAll('.ref-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.ref === refKey);
+                });
+
+                updateUI();
+            }
+
+            // =========================================================================
+            // 10. EVENT LISTENERS (100% RELIABLE INTERACTIVITY)
+            // =========================================================================
+            // Top 2-Menu Refrigerant Tabs (R-32 & R-410A)
+            document.querySelectorAll('.sys-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setRefrigerant(btn.dataset.ref);
+                });
+            });
+
+            // Sidebar Refrigerant Buttons (Synced with Top Menu)
+            document.querySelectorAll('.ref-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setRefrigerant(btn.dataset.ref);
+                });
+            });
+
+            // Pressure Unit Toggle (MPa(abs) / PSIG / Bar)
+            const unitButtons = [
+                { id: 'btn-unit-mpa', unit: 'MPA' },
+                { id: 'btn-unit-psig', unit: 'PSIG' },
+                { id: 'btn-unit-bar', unit: 'BAR' }
+            ];
+            unitButtons.forEach(({ id, unit }) => {
+                document.getElementById(id).addEventListener('click', () => {
+                    appState.pressureUnit = unit;
+                    unitButtons.forEach(u => {
+                        document.getElementById(u.id).classList.toggle('active', u.unit === unit);
+                    });
+                    updateUI();
+                });
+            });
+
+            // Theme Toggle
+            document.getElementById('btn-theme-toggle').addEventListener('click', () => {
+                const isLight = document.body.classList.toggle('light-mode');
+                document.getElementById('theme-label').textContent = isLight ? '🌙 โหมดมืด' : '☀️ โหมดสว่าง';
+                drawPhCanvas();
+            });
+
+            // Sliders
+            document.getElementById('slider-indoor').addEventListener('input', (e) => {
+                appState.indoorTemp = parseFloat(e.target.value);
+                updateUI();
+            });
+
+            document.getElementById('slider-outdoor').addEventListener('input', (e) => {
+                appState.outdoorTemp = parseFloat(e.target.value);
+                updateUI();
+            });
+
+            document.getElementById('slider-speed').addEventListener('input', (e) => {
+                appState.speedPct = parseInt(e.target.value, 10);
+                updateUI();
+            });
+
+            // Fault Troubleshooting Buttons
+            document.querySelectorAll('.fault-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const faultKey = btn.dataset.fault || 'NORMAL';
+                    appState.fault = faultKey;
+
+                    document.querySelectorAll('.fault-btn').forEach(b => {
+                        b.classList.remove('active-normal', 'active-fault');
+                    });
+
+                    if (faultKey === 'NORMAL') btn.classList.add('active-normal');
+                    else btn.classList.add('active-fault');
+
+                    updateUI();
+                });
+            });
+
+            // 5-State Legend Highlight Buttons
+            document.querySelectorAll('.state-pill-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const st = parseInt(btn.dataset.state, 10);
+                    appState.highlightedState = (appState.highlightedState === st) ? null : st;
+                    document.querySelectorAll('.state-pill-btn').forEach(b => {
+                        b.classList.toggle('highlighted', parseInt(b.dataset.state, 10) === appState.highlightedState);
+                    });
+                    drawPhCanvas();
+                });
+            });
+
+            // SVG Component Click & Keyboard Selection
+            [
+                { id: 'comp-group', key: 'COMP' },
+                { id: 'cond-group', key: 'COND' },
+                { id: 'eev-group', key: 'EEV' },
+                { id: 'evap-group', key: 'EVAP' }
+            ].forEach(({ id, key }) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('click', () => selectComponent(key));
+                    el.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            selectComponent(key);
+                        }
+                    });
+                }
+            });
+
+            // Inspector Component Tabs
+            document.querySelectorAll('.comp-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    selectComponent(tab.dataset.comp);
+                });
+            });
+
+            // P-h Animation Play/Pause Button
+            document.getElementById('btn-play-pause').addEventListener('click', () => {
+                appState.isPlaying = !appState.isPlaying;
+                const btn = document.getElementById('btn-play-pause');
+                if (appState.isPlaying) {
+                    btn.textContent = '⏸ หยุดชั่วคราว';
+                    btn.classList.remove('paused');
+                } else {
+                    btn.textContent = '▶ เล่นต่อ';
+                    btn.classList.add('paused');
+                }
+                updateUI();
+            });
+
+            // Reset Simulation Button
+            document.getElementById('btn-reset').addEventListener('click', () => {
+                appState.indoorTemp = 25.0;
+                appState.outdoorTemp = 35.0;
+                appState.speedPct = 100;
+                appState.fault = 'NORMAL';
+                appState.highlightedState = null;
+                appState.isPlaying = true;
+                appState.cycleProgress = 0.0;
+
+                document.getElementById('slider-indoor').value = 25;
+                document.getElementById('slider-outdoor').value = 35;
+                document.getElementById('slider-speed').value = 100;
+
+                document.querySelectorAll('.fault-btn').forEach(b => {
+                    b.classList.remove('active-normal', 'active-fault');
+                    if (b.dataset.fault === 'NORMAL') b.classList.add('active-normal');
+                });
+
+                document.querySelectorAll('.state-pill-btn').forEach(b => b.classList.remove('highlighted'));
+
+                const playBtn = document.getElementById('btn-play-pause');
+                playBtn.textContent = '⏸ หยุดชั่วคราว';
+                playBtn.classList.remove('paused');
+
+                setRefrigerant('R32');
+                selectComponent('COMP');
+            });
+
+            // Responsive Canvas Resize Observer
+            window.addEventListener('resize', () => {
+                drawPhCanvas();
+            });
+
+            // =========================================================================
+            // 11. INITIALIZE SIMULATION & START 0.1x ANIMATION LOOP
+            // =========================================================================
+            selectComponent('COMP');
+            updateUI();
+            requestAnimationFrame(animationLoop);
+        })();
+    </script>
+</body>
+</html>
